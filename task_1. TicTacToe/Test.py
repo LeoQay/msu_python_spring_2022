@@ -17,7 +17,6 @@ class TicTacTest(unittest.TestCase):
         self.assertEqual(self.game.check_winner(), winner)
 
     def __do_game(self, first_player, game_list, winner):
-        self.game = 0
         self.game = Tt.TicTac(first_player)
         self.turn_counter = 0
 
@@ -37,6 +36,9 @@ class TicTacTest(unittest.TestCase):
     def make_tests(self):
         self.test_lib.append((1, 'X', [0, 1, 2, 3, 4, 5, 6], 'X'))
         self.test_lib.append((2, 'o', [0, 8, 1, 7, 2], 'o'))
+        self.test_lib.append((3, 'X', [4, 2, 0, 8, 5, 3, 7, 1, 6], '_'))
+        self.test_lib.append((4, 'X', [4, 2, 0, 8, 5, 3, 7, 1, 6], '_'))
+        self.test_lib.append((5, 'X', [0, 2, 4, 6, 8], 'X'))
 
 
 if __name__ == "__main__":
