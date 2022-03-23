@@ -15,6 +15,14 @@ class TicTac:
     __nobody_name = '_'
     __board = ['_' for i in range(9)]
 
+    def __init__(self, first_player='O'):
+        self.__check_sym(first_player)
+        self.__current_player = first_player.upper()
+
+    def __del__(self):
+        for i, it in enumerate(self.__board):
+            self.__board[i] = self.__nobody_name
+
     def start_game(self):
         print("Choose first player >>> ", end='')
         first_player = input()
@@ -32,6 +40,7 @@ class TicTac:
         winner = self.__nobody_name
         while True:
             self.validate_input()
+            self.show_board()
             winner = self.check_winner()
             if winner != self.__nobody_name:
                 break
@@ -39,14 +48,13 @@ class TicTac:
         return winner
 
     def validate_input(self):
-        """
-        Process of one turn
-        """
         print('Turn of player', self.__current_player, end='')
         print(' (from 0 to 8) >>> ', end='')
         pos = int(input())
-        self.insert(pos, self.__current_player)
-        self.show_board()
+        self.turn(pos)
+
+    def turn(self, pos):
+        self.__insert(pos, self.__current_player)
         self.__next_player()
 
     def check_winner(self):
@@ -67,7 +75,7 @@ class TicTac:
                 print(self.__board[convert(i, j)], " ", sep='', end='')
             print("|")
 
-    def insert(self, pos, sym):
+    def __insert(self, pos, sym):
         self.__check_pos(pos)
         self.__check_sym(sym)
         sym = str(sym).upper()
