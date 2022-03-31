@@ -3,7 +3,7 @@ import tic_tac as tt
 
 
 class TicTacTest(unittest.TestCase):
-    game = tt.TicTac(out=False)
+    game = tt.TicTac(is_print=False)
     turn_counter = 0
 
     def do_test_turn(self, pos, winner):
@@ -12,7 +12,7 @@ class TicTacTest(unittest.TestCase):
         self.assertEqual(self.game.check_winner(), winner)
 
     def do_test_game(self, first_player, game_list, winner):
-        self.game = tt.TicTac(first_player, err_mode='high', out=False)
+        self.game = tt.TicTac(first_player, err_mode='high', is_print=False)
         self.turn_counter = 0
 
         for i in range(len(game_list) - 1):
@@ -108,7 +108,7 @@ class TicTacTestValidateName(TicTacTest):
     """ Testing name validator """
 
     def __do_name_validate_test(self, name, ret):
-        self.game = tt.TicTac(out=False)
+        self.game = tt.TicTac(is_print=False)
         self.assertEqual(ret, self.game.validate_name_input(name))
 
     def test_validate_name_1(self):
@@ -152,7 +152,7 @@ class TicTacTestPosValidator(TicTacTest):
     """ Testing position validator """
 
     def __do_pos_validate_test(self, token, ret):
-        self.game = tt.TicTac(out=False)
+        self.game = tt.TicTac(is_print=False)
         self.assertEqual(ret, self.game.validate_pos_input(token))
 
     def test_validate_pos_1(self):
@@ -229,7 +229,7 @@ class TicTacTestInit(TicTacTest):
 
     def test_init_6(self):
         try:
-            self.game = tt.TicTac(out='reh')
+            self.game = tt.TicTac(is_print='reh')
         except AssertionError:
             pass
         else:
@@ -237,7 +237,7 @@ class TicTacTestInit(TicTacTest):
 
     def test_init_7(self):
         try:
-            self.game = tt.TicTac(out=23)
+            self.game = tt.TicTac(is_print=23)
         except AssertionError:
             pass
         else:
@@ -245,13 +245,13 @@ class TicTacTestInit(TicTacTest):
 
     def test_init_8(self):
         try:
-            self.game = tt.TicTac(out=True)
+            self.game = tt.TicTac(is_print=True)
         except AssertionError:
             assert False
 
     def test_init_9(self):
         try:
-            self.game = tt.TicTac(out=False)
+            self.game = tt.TicTac(is_print=False)
         except AssertionError:
             assert False
 

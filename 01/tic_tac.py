@@ -14,20 +14,20 @@ class TicTac:
     __agree_lower = ['y', 'yes', 'yep', 'ok', 'da']
     __err_modes = ['low', 'high']
     __err_mode = 'low'
-    __out = True
+    __is_print = True
     __stop_words = ['exit', 'end', 'stop']
 
-    def __init__(self, first_player='O', err_mode='low', out=True):
+    def __init__(self, first_player='O', err_mode='low', is_print=True):
         if err_mode in self.__err_modes:
             self.__err_mode = err_mode
         else:
             assert False, 'Wrong error mode, only \'low\' or \'high\''
 
-        if not isinstance(out, bool):
-            ret = 'Wrong out type, bool expected,' + str(type(out)) + ' given'
+        if not isinstance(is_print, bool):
+            ret = 'Wrong out type, bool expected,' + str(type(is_print)) + ' given'
             assert False, ret
 
-        self.__out = out
+        self.__is_print = is_print
         self.__check_sym(first_player)
         self.__cur_player = first_player.upper()
         self.__step_counter = 0
@@ -198,7 +198,7 @@ class TicTac:
         return main or sub
 
     def my_print(self, *args, **kwargs):
-        if self.__out:
+        if self.__is_print:
             print(*args, **kwargs)
 
     def my_input(self):
@@ -213,5 +213,5 @@ class TicTac:
 
 
 if __name__ == "__main__":
-    game = TicTac()
+    game = TicTac(first_player='X', err_mode='low', is_print=True)
     game.start()
