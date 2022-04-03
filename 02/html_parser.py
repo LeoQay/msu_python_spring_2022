@@ -47,7 +47,8 @@ class HtmlParser:
         self.stack[-1][1].append(data_token)
 
     def push_open(self, open_tag: str) -> None:
-        self.stack.append((open_tag, [], ''))
+        self.stack.append((open_tag, []))
+        self.open_call(open_tag)
 
     def push_close(self, close_tag: str) -> None:
         if len(self.stack) == 0:
@@ -59,7 +60,8 @@ class HtmlParser:
             answer += '\'' + close_tag + '\''
             raise SyntaxError(answer)
         last = self.stack[-1]
-        self.run_tag_calls((last[0], last[1], close_tag))
+        self.data_call(last[1])
+        self.close_call(close_tag)
         del self.stack[-1]
 
     @staticmethod
@@ -129,11 +131,6 @@ class HtmlParser:
             return False
 
         return tag_token[left:-1].strip().isalpha()
-
-    def run_tag_calls(self, tag_info: (str, list, str)) -> None:
-        self.open_call(tag_info[0])
-        self.data_call(''.join(tag_info[1]))
-        self.close_call(tag_info[2])
 
 
 def parse_html(html_str: str,
