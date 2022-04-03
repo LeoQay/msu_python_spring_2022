@@ -1,0 +1,10 @@
+Open tag:<body>
+Data:
+Body data
+
+Close tag:</body>
+Open tag:<html>
+Data:
+
+
+Close tag:</html>

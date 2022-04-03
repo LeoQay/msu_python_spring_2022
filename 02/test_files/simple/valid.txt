@@ -1,0 +1,3 @@
+Open tag:<body>
+Data:Simple data
+Close tag:</body>
