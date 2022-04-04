@@ -42,9 +42,11 @@ class HtmlParser:
     def get_tags(self) -> list:
         ret = []
         while True:
+            self.skip_type('data')
             tag = self.get_tag()
             if tag is None:
                 return ret
+            self.skip_type('data')
             ret.append(tag)
 
     def get_tag(self) -> (str, list, list, str) or None:
@@ -68,15 +70,6 @@ class HtmlParser:
             elif token[1] == 'close':
                 return open_tag[0], tag_list, data_list, token[0]
 
-    @staticmethod
-    def is_tag_pair(open_tag: str, close_tag: str) -> bool:
-        return open_tag[1:-1].lower() == close_tag[2:-1].lower()
-
-    def return_token(self) -> None:
-        if self.token_stack_ptr <= 0:
-            raise IndexError('Token stack index out range')
-        self.token_stack_ptr -= 1
-
     def get_token(self) -> (str, str) or None:
         if self.token_stack_ptr >= len(self.token_stack):
             return None
@@ -84,22 +77,37 @@ class HtmlParser:
         self.token_stack_ptr += 1
         return ret
 
+    def return_token(self) -> None:
+        if self.token_stack_ptr <= 0:
+            raise IndexError('Token stack index out range')
+        self.token_stack_ptr -= 1
+
+    def skip_type(self, tok_type: str) -> None:
+        while True:
+            token = self.get_token()
+            if token is None:
+                return
+            if token[1] != tok_type:
+                self.return_token()
+                return
+
     def make_token_stack(self) -> None:
         if self.html_str[0].strip() == '':
             return
 
         # append first tag
-        self.token_stack.append(self.get_tag_token())
+        self.token_stack.append(self.get_next_tag_token())
 
         while self.html_str[1] < len(self.html_str[0]):
             data_start = self.html_str[1]
             tag_token = self.get_next_tag_token()
             if tag_token is None:
-                raise SyntaxError('Missing tag')
+                return
             data_end = \
                 self.html_str[0].rfind('<', data_start, self.html_str[1])
             data = self.html_str[0][data_start:data_end]
-            self.token_stack.append((data, 'data'))
+            if len(data) > 0:
+                self.token_stack.append((data, 'data'))
             self.token_stack.append(tag_token)
 
     def get_next_tag_token(self) -> (str, str) or None:
@@ -157,6 +165,10 @@ class HtmlParser:
                 return False
         return True
 
+    @staticmethod
+    def is_tag_pair(open_tag: str, close_tag: str) -> bool:
+        return open_tag[1:-1].lower() == close_tag[2:-1].lower()
+
 
 def parse_html(html_str: str,
                open_tag_callback,
@@ -181,7 +193,5 @@ def print_data(tok: str):
 
 
 if __name__ == "__main__":
-    parse_html('<html></html>', print_open_tag, print_data, print_close_tag)
-
     with open("for_test.html", "r", encoding='UTF-8') as file:
         parse_html(''.join(file), print_open_tag, print_data, print_close_tag)

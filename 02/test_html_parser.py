@@ -82,7 +82,7 @@ class TestHtmlParser(unittest.TestCase):
         self.assertTrue(is_equal)
 
 
-class JustTestHtmlParser(TestHtmlParser):
+class JustFewTestHtmlParser(TestHtmlParser):
     def test_io_simple(self):
         self.do_test_input_output('simple')
 
@@ -92,6 +92,8 @@ class JustTestHtmlParser(TestHtmlParser):
     def test_io_2(self):
         self.do_test_input_output('io2')
 
+
+class SimpleTestHtmlParser(TestHtmlParser):
     def test_io_3(self):
         """ Empty file """
         self.do_test_input_output('io3')
@@ -99,6 +101,10 @@ class JustTestHtmlParser(TestHtmlParser):
     def test_io_4(self):
         """ One empty tag """
         self.do_test_input_output('io4')
+
+    def test_io_5(self):
+        """ Two empty tags """
+        self.do_test_input_output('io5')
 
 
 if __name__ == '__main__':
