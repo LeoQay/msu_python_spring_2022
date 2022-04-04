@@ -85,6 +85,9 @@ class TestHtmlParser(unittest.TestCase):
     def test_io_1(self):
         self.do_test_input_output('io1')
 
+    def test_io_2(self):
+        self.do_test_input_output('io2')
+
 
 if __name__ == '__main__':
     unittest.main()

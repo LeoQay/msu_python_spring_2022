@@ -1,0 +1,20 @@
+Open tag:<html>
+Open tag:<head>
+Open tag:<title>
+Data:Title
+Close tag:</title>
+Data:
+    
+
+Close tag:</head>
+Open tag:<body>
+Data:
+     ahahahah
+
+Close tag:</body>
+Data:
+
+
+
+
+Close tag:</html>
