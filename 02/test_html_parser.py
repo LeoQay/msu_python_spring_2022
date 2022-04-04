@@ -75,10 +75,14 @@ class TestHtmlParser(unittest.TestCase):
         html_str = self.get_input_str()
         self.parse_to_file(html_str)
         is_equal = filecmp.cmp(self.test_file_name, self.validator_name)
+
         if not is_equal:
             TestHtmlParser.parse_to_console(html_str)
+
         self.assertTrue(is_equal)
 
+
+class JustTestHtmlParser(TestHtmlParser):
     def test_io_simple(self):
         self.do_test_input_output('simple')
 
@@ -87,6 +91,14 @@ class TestHtmlParser(unittest.TestCase):
 
     def test_io_2(self):
         self.do_test_input_output('io2')
+
+    def test_io_3(self):
+        """ Empty file """
+        self.do_test_input_output('io3')
+
+    def test_io_4(self):
+        """ One empty tag """
+        self.do_test_input_output('io4')
 
 
 if __name__ == '__main__':
