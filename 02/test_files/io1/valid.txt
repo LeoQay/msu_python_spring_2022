@@ -1,9 +1,9 @@
+Open tag:<html>
 Open tag:<body>
 Data:
 Body data
 
 Close tag:</body>
-Open tag:<html>
 Data:
 
 
