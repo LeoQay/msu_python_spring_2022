@@ -106,6 +106,14 @@ class SimpleTestHtmlParser(TestHtmlParser):
         """ Two empty tags """
         self.do_test_input_output('io5')
 
+    def test_io_6(self):
+        """ One tag and some data """
+        self.do_test_input_output('io6')
+
+    def test_io_7(self):
+        """ Little recursion """
+        self.do_test_input_output('io7')
+
 
 if __name__ == '__main__':
     unittest.main()

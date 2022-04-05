@@ -1,0 +1,19 @@
+Open tag:<html>
+Open tag:<body>
+Open tag:<title>
+Open tag:<p1>
+Data:
+
+Close tag:</p1>
+Data:
+
+
+Close tag:</title>
+Data:
+
+
+Close tag:</body>
+Data:
+
+
+Close tag:</html>
