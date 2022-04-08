@@ -2,9 +2,10 @@ import os
 import filecmp
 import unittest
 import html_parser as hp
+from unittest.mock import patch
 
 
-class TestHtmlParser(unittest.TestCase):
+class HardTestHtmlParser(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, *kwargs)
         self.test_file_name = ''
@@ -66,9 +67,9 @@ class TestHtmlParser(unittest.TestCase):
     @staticmethod
     def parse_to_console(html_str: str):
         hp.parse_html(html_str,
-                      TestHtmlParser.print_open_tag,
-                      TestHtmlParser.print_data,
-                      TestHtmlParser.print_close_tag)
+                      HardTestHtmlParser.print_open_tag,
+                      HardTestHtmlParser.print_data,
+                      HardTestHtmlParser.print_close_tag)
 
     def do_test_input_output(self, test_name: str):
         self.set_test_name(test_name)
@@ -77,12 +78,12 @@ class TestHtmlParser(unittest.TestCase):
         is_equal = filecmp.cmp(self.test_file_name, self.validator_name)
 
         if not is_equal:
-            TestHtmlParser.parse_to_console(html_str)
+            HardTestHtmlParser.parse_to_console(html_str)
 
         self.assertTrue(is_equal)
 
 
-class JustFewTestHtmlParser(TestHtmlParser):
+class JustFewTestHtmlParser(HardTestHtmlParser):
     def test_io_simple(self):
         self.do_test_input_output('simple')
 
@@ -93,7 +94,7 @@ class JustFewTestHtmlParser(TestHtmlParser):
         self.do_test_input_output('io2')
 
 
-class SimpleTestHtmlParser(TestHtmlParser):
+class SimpleTestHtmlParser(HardTestHtmlParser):
     def test_io_3(self):
         """ Empty file """
         self.do_test_input_output('io3')
@@ -113,6 +114,64 @@ class SimpleTestHtmlParser(TestHtmlParser):
     def test_io_7(self):
         """ Little recursion """
         self.do_test_input_output('io7')
+
+    # def test_io_8(self):
+        """ A few recursions """
+
+
+class TestParserCalls(unittest.TestCase):
+    @patch('html_parser.HtmlParser.do_close_call')
+    @patch('html_parser.HtmlParser.do_data_call')
+    @patch('html_parser.HtmlParser.do_open_call')
+    def test_simple_calls(self,
+                          do_open_call_mock,
+                          do_data_call_mock,
+                          do_close_call_mock):
+        hp.parse_html("<html></html>")
+        self.assertEqual(do_open_call_mock.call_count, 1)
+        self.assertEqual(do_open_call_mock.call_args[0][0], '<html>')
+
+        self.assertEqual(do_data_call_mock.call_count, 1)
+        self.assertEqual(do_data_call_mock.call_args[0][0], '')
+
+        self.assertEqual(do_close_call_mock.call_count, 1)
+        self.assertEqual(do_close_call_mock.call_args[0][0], '</html>')
+
+    @patch('html_parser.HtmlParser.do_close_call')
+    @patch('html_parser.HtmlParser.do_data_call')
+    @patch('html_parser.HtmlParser.do_open_call')
+    def test_one_data(self,
+                      do_open_call_mock,
+                      do_data_call_mock,
+                      do_close_call_mock):
+        hp.parse_html("<title>Some data</title>")
+
+        self.assertEqual(do_open_call_mock.call_count, 1)
+        self.assertEqual(do_open_call_mock.call_args[0][0], '<title>')
+
+        self.assertEqual(do_data_call_mock.call_count, 1)
+        self.assertEqual(do_data_call_mock.call_args[0][0], 'Some data')
+
+        self.assertEqual(do_close_call_mock.call_count, 1)
+        self.assertEqual(do_close_call_mock.call_args[0][0], '</title>')
+
+    @patch('html_parser.HtmlParser.do_close_call')
+    @patch('html_parser.HtmlParser.do_data_call')
+    @patch('html_parser.HtmlParser.do_open_call')
+    def test_some_data(self,
+                       do_open_call_mock,
+                       do_data_call_mock,
+                       do_close_call_mock):
+        hp.parse_html("<html>data1<body>data2</body>data3</html>")
+
+        self.assertEqual(do_open_call_mock.call_count, 2)
+        self.assertEqual(do_open_call_mock.call_args[0][0], '<body>')
+
+        self.assertEqual(do_data_call_mock.call_count, 2)
+        self.assertEqual(do_data_call_mock.call_args[0][0], 'data1data3')
+
+        self.assertEqual(do_close_call_mock.call_count, 2)
+        self.assertEqual(do_close_call_mock.call_args[0][0], '</html>')
 
 
 if __name__ == '__main__':

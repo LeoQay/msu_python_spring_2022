@@ -1,8 +1,8 @@
 class HtmlParser:
     def __init__(self,
-                 open_tag_callback,
-                 data_callback,
-                 close_tag_callback):
+                 open_tag_callback=None,
+                 data_callback=None,
+                 close_tag_callback=None):
         self.token_stack = []
         self.token_stack_ptr = 0
         self.stack = []
@@ -29,15 +29,27 @@ class HtmlParser:
             raise SyntaxError('Syntax error')
         self.run_tags(self.stack)
 
+    def do_open_call(self, token: str):
+        if not (self.open_call is None):
+            self.open_call(token)
+
+    def do_close_call(self, token: str):
+        if not (self.close_call is None):
+            self.close_call(token)
+
+    def do_data_call(self, token: str):
+        if not (self.data_call is None):
+            self.data_call(token)
+
     def run_tags(self, tag_list):
         for tag in tag_list:
             self.run_tag(tag)
 
     def run_tag(self, tag):
-        self.open_call(tag[0])
+        self.do_open_call(tag[0])
         self.run_tags(tag[1])
-        self.data_call(''.join(tag[2]))
-        self.close_call(tag[3])
+        self.do_data_call(''.join(tag[2]))
+        self.do_close_call(tag[3])
 
     def get_tags(self) -> list:
         ret = []
@@ -171,9 +183,9 @@ class HtmlParser:
 
 
 def parse_html(html_str: str,
-               open_tag_callback,
-               data_callback,
-               close_tag_callback):
+               open_tag_callback=None,
+               data_callback=None,
+               close_tag_callback=None):
     parser = HtmlParser(open_tag_callback,
                         data_callback,
                         close_tag_callback)
