@@ -125,6 +125,7 @@ class TestParserCalls(unittest.TestCase):
                    do_data_call_mock,
                    do_close_call_mock):
         hp.parse_html("")
+
         self.assertEqual(do_open_call_mock.call_count, 0)
         self.assertEqual(do_data_call_mock.call_count, 0)
         self.assertEqual(do_close_call_mock.call_count, 0)
@@ -137,6 +138,7 @@ class TestParserCalls(unittest.TestCase):
                           do_data_call_mock,
                           do_close_call_mock):
         hp.parse_html("<html></html>")
+
         self.assertEqual(do_open_call_mock.call_count, 1)
         self.assertEqual(do_open_call_mock.call_args[0][0], '<html>')
 
