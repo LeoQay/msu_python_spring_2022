@@ -111,6 +111,6 @@ if __name__ == '__main__':
     cus1 = CustomList([1, 2, 3, 5])
     cus2 = CustomList([2, 3, 4])
     print([1, 23] > cus1)
+    print(cus1 + cus2 - cus1)
     print(cus1)
     print(cus2)
-
