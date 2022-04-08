@@ -30,15 +30,15 @@ class HtmlParser:
         self.run_tags(self.stack)
 
     def do_open_call(self, token: str):
-        if not (self.open_call is None):
+        if self.open_call is not None:
             self.open_call(token)
 
     def do_close_call(self, token: str):
-        if not (self.close_call is None):
+        if self.close_call is not None:
             self.close_call(token)
 
     def do_data_call(self, token: str):
-        if not (self.data_call is None):
+        if self.data_call is not None:
             self.data_call(token)
 
     def run_tags(self, tag_list):

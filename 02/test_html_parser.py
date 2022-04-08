@@ -1,8 +1,8 @@
 import os
 import filecmp
 import unittest
-import html_parser as hp
 from unittest.mock import patch
+import html_parser as hp
 
 
 class HardTestHtmlParser(unittest.TestCase):
