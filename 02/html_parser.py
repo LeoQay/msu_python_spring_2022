@@ -80,6 +80,8 @@ class HtmlParser:
                 self.return_token()
                 tag_list.append(self.get_tag())
             elif token[1] == 'close':
+                if not self.is_tag_pair(open_tag[0], token[0]):
+                    raise SyntaxError('Open and close tags not pair')
                 return open_tag[0], tag_list, data_list, token[0]
 
     def get_token(self) -> (str, str) or None:
@@ -91,6 +93,7 @@ class HtmlParser:
 
     def return_token(self) -> None:
         if self.token_stack_ptr <= 0:
+            # if the code is written well, then this place is unreachable
             raise IndexError('Token stack index out range')
         self.token_stack_ptr -= 1
 

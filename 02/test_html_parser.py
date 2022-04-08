@@ -1,6 +1,7 @@
 import os
 import filecmp
 import unittest
+import factory
 from unittest.mock import patch
 import html_parser as hp
 
@@ -52,34 +53,11 @@ class HardTestHtmlParser(unittest.TestCase):
                       self.call_data(),
                       self.call_close_tag())
 
-    @staticmethod
-    def print_open_tag(tok: str):
-        print("Open tag:", tok, sep='')
-
-    @staticmethod
-    def print_close_tag(tok: str):
-        print("Close tag:", tok, sep='')
-
-    @staticmethod
-    def print_data(tok: str):
-        print("Data:", tok, sep='')
-
-    @staticmethod
-    def parse_to_console(html_str: str):
-        hp.parse_html(html_str,
-                      HardTestHtmlParser.print_open_tag,
-                      HardTestHtmlParser.print_data,
-                      HardTestHtmlParser.print_close_tag)
-
     def do_test_input_output(self, test_name: str):
         self.set_test_name(test_name)
         html_str = self.get_input_str()
         self.parse_to_file(html_str)
         is_equal = filecmp.cmp(self.test_file_name, self.validator_name)
-
-        if not is_equal:
-            HardTestHtmlParser.parse_to_console(html_str)
-
         self.assertTrue(is_equal)
 
 
@@ -191,7 +169,8 @@ class TestParserCalls(unittest.TestCase):
                                 do_open_call_mock,
                                 do_data_call_mock,
                                 do_close_call_mock):
-        hp.parse_html("data1<html>data2</html>data3")
+        inp = "data1<html>data2</html>data3"
+        hp.parse_html(inp)
 
         self.assertEqual(do_open_call_mock.call_count, 1)
         self.assertEqual(do_open_call_mock.call_args[0][0], '<html>')
@@ -201,6 +180,42 @@ class TestParserCalls(unittest.TestCase):
 
         self.assertEqual(do_close_call_mock.call_count, 1)
         self.assertEqual(do_close_call_mock.call_args[0][0], '</html>')
+
+
+class TestWrongInputHtmlParser(unittest.TestCase):
+    def test_wrong_pair_tag(self):
+        inp = '<html>Something</body>'
+        self.assertRaises((SyntaxError,), hp.parse_html, inp)
+
+    def test_missing_close_tag(self):
+        inp = '<title>data data data'
+        self.assertRaises((SyntaxError,), hp.parse_html, inp)
+
+    def test_missing_open_tag(self):
+        inp = 'data data data</title>'
+        self.assertRaises((SyntaxError,), hp.parse_html, inp)
+
+
+class TestDifficultHtmlParser(unittest.TestCase):
+    @patch('html_parser.HtmlParser.do_close_call')
+    @patch('html_parser.HtmlParser.do_data_call')
+    @patch('html_parser.HtmlParser.do_open_call')
+    def test_difficult_symbols(self,
+                               do_open_call_mock,
+                               do_data_call_mock,
+                               do_close_call_mock):
+        inp = '<title>data ><data    d<ata</title>'
+        hp.parse_html(inp)
+
+        self.assertEqual(do_open_call_mock.call_count, 1)
+        self.assertEqual(do_open_call_mock.call_args[0][0], '<title>')
+
+        self.assertEqual(do_data_call_mock.call_count, 1)
+        self.assertEqual(do_data_call_mock.call_args[0][0],
+                         'data ><data    d<ata')
+
+        self.assertEqual(do_close_call_mock.call_count, 1)
+        self.assertEqual(do_close_call_mock.call_args[0][0], '</title>')
 
 
 if __name__ == '__main__':
