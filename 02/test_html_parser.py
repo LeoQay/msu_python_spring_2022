@@ -1,9 +1,28 @@
 import os
 import filecmp
 import unittest
-import factory
 from unittest.mock import patch
+import factory
 import html_parser as hp
+
+
+class Data:
+    def __init__(self, data: str):
+        self.data = data
+
+    def __str__(self):
+        return self.data
+
+
+class DataFactory(factory.Factory):
+    class Meta:
+        model = Data
+
+    data = factory.Sequence(lambda n: n)
+
+
+def do_data(count: int):
+    return tuple(str(DataFactory) for _ in range(count))
 
 
 class HardTestHtmlParser(unittest.TestCase):
@@ -133,13 +152,15 @@ class TestParserCalls(unittest.TestCase):
                       do_open_call_mock,
                       do_data_call_mock,
                       do_close_call_mock):
-        hp.parse_html("<title>Some data</title>")
+        some_data = do_data(1)
+
+        hp.parse_html(f"<title>{some_data[0]}</title>")
 
         self.assertEqual(do_open_call_mock.call_count, 1)
         self.assertEqual(do_open_call_mock.call_args[0][0], '<title>')
 
         self.assertEqual(do_data_call_mock.call_count, 1)
-        self.assertEqual(do_data_call_mock.call_args[0][0], 'Some data')
+        self.assertEqual(do_data_call_mock.call_args[0][0], some_data[0])
 
         self.assertEqual(do_close_call_mock.call_count, 1)
         self.assertEqual(do_close_call_mock.call_args[0][0], '</title>')
@@ -151,13 +172,15 @@ class TestParserCalls(unittest.TestCase):
                        do_open_call_mock,
                        do_data_call_mock,
                        do_close_call_mock):
-        hp.parse_html("<html>data1<body>data2</body>data3</html>")
+        data = do_data(3)
+
+        hp.parse_html(f"<html>{data[0]}<body>{data[1]}</body>{data[2]}</html>")
 
         self.assertEqual(do_open_call_mock.call_count, 2)
         self.assertEqual(do_open_call_mock.call_args[0][0], '<body>')
 
         self.assertEqual(do_data_call_mock.call_count, 2)
-        self.assertEqual(do_data_call_mock.call_args[0][0], 'data1data3')
+        self.assertEqual(do_data_call_mock.call_args[0][0], data[0] + data[2])
 
         self.assertEqual(do_close_call_mock.call_count, 2)
         self.assertEqual(do_close_call_mock.call_args[0][0], '</html>')
@@ -169,14 +192,16 @@ class TestParserCalls(unittest.TestCase):
                                 do_open_call_mock,
                                 do_data_call_mock,
                                 do_close_call_mock):
-        inp = "data1<html>data2</html>data3"
+        data = do_data(3)
+
+        inp = f"{data[0]}<html>{data[1]}</html>{data[2]}"
         hp.parse_html(inp)
 
         self.assertEqual(do_open_call_mock.call_count, 1)
         self.assertEqual(do_open_call_mock.call_args[0][0], '<html>')
 
         self.assertEqual(do_data_call_mock.call_count, 1)
-        self.assertEqual(do_data_call_mock.call_args[0][0], 'data2')
+        self.assertEqual(do_data_call_mock.call_args[0][0], data[1])
 
         self.assertEqual(do_close_call_mock.call_count, 1)
         self.assertEqual(do_close_call_mock.call_args[0][0], '</html>')
@@ -184,19 +209,23 @@ class TestParserCalls(unittest.TestCase):
 
 class TestWrongInputHtmlParser(unittest.TestCase):
     def test_wrong_pair_tag(self):
-        inp = '<html>Something</body>'
+        data = do_data(1)
+        inp = f'<html>{data[0]}</body>'
         self.assertRaises((SyntaxError,), hp.parse_html, inp)
 
     def test_missing_close_tag(self):
-        inp = '<title>data data data'
+        data = do_data(1)
+        inp = f'<title>{data[0]}'
         self.assertRaises((SyntaxError,), hp.parse_html, inp)
 
     def test_missing_open_tag(self):
-        inp = 'data data data</title>'
+        data = do_data(1)
+        inp = f'{data[0]}</title>'
         self.assertRaises((SyntaxError,), hp.parse_html, inp)
 
     def test_missing_close_sym_for_tag(self):
-        inp = '<html>data data</html'
+        data = do_data(1)
+        inp = f'<html>{data[0]}</html'
         self.assertRaises((SyntaxError,), hp.parse_html, inp)
 
 
@@ -228,7 +257,8 @@ class TestDifficultHtmlParser(unittest.TestCase):
                        do_open_call_mock,
                        do_data_call_mock,
                        do_close_call_mock):
-        inp = '<>data data data</>'
+        data = do_data(1)
+        inp = f'<>{data[0]}</>'
         hp.parse_html(inp)
 
         self.assertEqual(do_open_call_mock.call_count, 0)
