@@ -115,11 +115,20 @@ class SimpleTestHtmlParser(HardTestHtmlParser):
         """ Little recursion """
         self.do_test_input_output('io7')
 
-    # def test_io_8(self):
-        """ A few recursions """
-
 
 class TestParserCalls(unittest.TestCase):
+    @patch('html_parser.HtmlParser.do_close_call')
+    @patch('html_parser.HtmlParser.do_data_call')
+    @patch('html_parser.HtmlParser.do_open_call')
+    def test_empty(self,
+                   do_open_call_mock,
+                   do_data_call_mock,
+                   do_close_call_mock):
+        hp.parse_html("")
+        self.assertEqual(do_open_call_mock.call_count, 0)
+        self.assertEqual(do_data_call_mock.call_count, 0)
+        self.assertEqual(do_close_call_mock.call_count, 0)
+
     @patch('html_parser.HtmlParser.do_close_call')
     @patch('html_parser.HtmlParser.do_data_call')
     @patch('html_parser.HtmlParser.do_open_call')
@@ -171,6 +180,24 @@ class TestParserCalls(unittest.TestCase):
         self.assertEqual(do_data_call_mock.call_args[0][0], 'data1data3')
 
         self.assertEqual(do_close_call_mock.call_count, 2)
+        self.assertEqual(do_close_call_mock.call_args[0][0], '</html>')
+
+    @patch('html_parser.HtmlParser.do_close_call')
+    @patch('html_parser.HtmlParser.do_data_call')
+    @patch('html_parser.HtmlParser.do_open_call')
+    def test_some_not_call_data(self,
+                                do_open_call_mock,
+                                do_data_call_mock,
+                                do_close_call_mock):
+        hp.parse_html("data1<html>data2</html>data3")
+
+        self.assertEqual(do_open_call_mock.call_count, 1)
+        self.assertEqual(do_open_call_mock.call_args[0][0], '<html>')
+
+        self.assertEqual(do_data_call_mock.call_count, 1)
+        self.assertEqual(do_data_call_mock.call_args[0][0], 'data2')
+
+        self.assertEqual(do_close_call_mock.call_count, 1)
         self.assertEqual(do_close_call_mock.call_args[0][0], '</html>')
 
 
