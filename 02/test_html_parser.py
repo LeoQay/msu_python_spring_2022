@@ -195,6 +195,10 @@ class TestWrongInputHtmlParser(unittest.TestCase):
         inp = 'data data data</title>'
         self.assertRaises((SyntaxError,), hp.parse_html, inp)
 
+    def test_missing_close_sym_for_tag(self):
+        inp = '<html>data data</html'
+        self.assertRaises((SyntaxError,), hp.parse_html, inp)
+
 
 class TestDifficultHtmlParser(unittest.TestCase):
     @patch('html_parser.HtmlParser.do_close_call')
@@ -204,7 +208,7 @@ class TestDifficultHtmlParser(unittest.TestCase):
                                do_open_call_mock,
                                do_data_call_mock,
                                do_close_call_mock):
-        inp = '<title>data ><data    d<ata</title>'
+        inp = '<title>data ><data  <  d<ata</title>'
         hp.parse_html(inp)
 
         self.assertEqual(do_open_call_mock.call_count, 1)
@@ -212,10 +216,24 @@ class TestDifficultHtmlParser(unittest.TestCase):
 
         self.assertEqual(do_data_call_mock.call_count, 1)
         self.assertEqual(do_data_call_mock.call_args[0][0],
-                         'data ><data    d<ata')
+                         'data ><data  <  d<ata')
 
         self.assertEqual(do_close_call_mock.call_count, 1)
         self.assertEqual(do_close_call_mock.call_args[0][0], '</title>')
+
+    @patch('html_parser.HtmlParser.do_close_call')
+    @patch('html_parser.HtmlParser.do_data_call')
+    @patch('html_parser.HtmlParser.do_open_call')
+    def test_empty_tag(self,
+                       do_open_call_mock,
+                       do_data_call_mock,
+                       do_close_call_mock):
+        inp = '<>data data data</>'
+        hp.parse_html(inp)
+
+        self.assertEqual(do_open_call_mock.call_count, 0)
+        self.assertEqual(do_close_call_mock.call_count, 0)
+        self.assertEqual(do_data_call_mock.call_count, 0)
 
 
 if __name__ == '__main__':

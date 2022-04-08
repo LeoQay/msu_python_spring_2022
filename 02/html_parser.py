@@ -140,6 +140,7 @@ class HtmlParser:
 
     def get_tag_token(self) -> (str, str):
         if self.html_str[0][self.html_str[1]] != '<':
+            # if the code is written well, then this place is unreachable
             raise SyntaxError('It is not tag token')
 
         pos = self.html_str[0].find('>', self.html_str[1] + 1)
