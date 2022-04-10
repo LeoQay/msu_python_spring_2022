@@ -1,6 +1,6 @@
 class CustomList(list):
     """
-    Works only with numeric values, int or float
+    Works only with numeric values, int or float or similar
     """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, *kwargs)
@@ -65,7 +65,7 @@ class CustomList(list):
     def __rge__(self, other):
         return sum(self) >= sum(other)
 
-    def do_op(self, other, op):
+    def do_op(self, other, operation):
         result = CustomList()
 
         other = CustomList(other)
@@ -82,8 +82,8 @@ class CustomList(list):
             change_len *= -1
             self.append_zeros(change_len)
 
-        for i in range(len(self)):
-            result.append(op(self[i], other[i]))
+        for self_val, other_val in zip(self, other):
+            result.append(operation(self_val, other_val))
 
         if oth_up:
             other.pop_back(change_len)
@@ -97,7 +97,7 @@ class CustomList(list):
     def append_zeros(self, amount: int):
         if amount < 0:
             raise ValueError('Negative argument')
-        for i in range(amount):
+        for _ in range(amount):
             self.append(0)
 
     def pop_back(self, amount: int):
