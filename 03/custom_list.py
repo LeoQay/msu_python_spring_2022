@@ -2,6 +2,7 @@ class CustomList(list):
     """
     Works only with numeric values, int or float or similar
     """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, *kwargs)
         self.change_len = 0
@@ -15,7 +16,7 @@ class CustomList(list):
 
     def __str__(self):
         result = super().__str__()
-        return f'Custom List: {result}, sum={sum(self)}'
+        return f"{result}, sum={sum(self)}"
 
     def __add__(self, other):
         return self.do_op(other, lambda a, b: a + b)
@@ -96,21 +97,21 @@ class CustomList(list):
 
     def append_zeros(self, amount: int):
         if amount < 0:
-            raise ValueError('Negative argument')
+            raise ValueError("Negative argument")
         for _ in range(amount):
             self.append(0)
 
     def pop_back(self, amount: int):
         if amount < 0:
-            raise ValueError('Negative argument')
+            raise ValueError("Negative argument")
         for _ in range(amount):
             self.pop(-1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     cus1 = CustomList([1, 2, 3, 5])
     cus2 = CustomList([2, 3, 4])
     print([1, 23] > cus1)
-    print(cus1 + cus2 - cus1)
+    print([2, 3] + cus2)
     print(cus1)
     print(cus2)
