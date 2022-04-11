@@ -49,22 +49,22 @@ class CustomList(list):
         return sum(self) >= sum(other)
 
     def __rlt__(self, other):
-        return sum(self) < sum(other)
+        return sum(other) < sum(self)
 
     def __rle__(self, other):
-        return sum(self) <= sum(other)
+        return sum(other) <= sum(self)
 
     def __req__(self, other):
-        return sum(self) == sum(other)
+        return sum(other) == sum(self)
 
     def __rne__(self, other):
-        return sum(self) != sum(other)
+        return sum(other) != sum(self)
 
     def __rgt__(self, other):
-        return sum(self) > sum(other)
+        return sum(other) > sum(self)
 
     def __rge__(self, other):
-        return sum(self) >= sum(other)
+        return sum(other) >= sum(self)
 
     def do_op(self, other, operation):
         result = CustomList()
@@ -113,4 +113,4 @@ class CustomList(list):
 if __name__ == "__main__":
     cus1 = CustomList([1, 2, 3, 5])
     cus2 = CustomList([2, 3, 4])
-    print([1, 2, 3] - cus1)
+    print([1, 2, 3] == cus1)
