@@ -247,6 +247,24 @@ class TestCustomListNE(TestCustomList):
                 self.assertTrue(lists[0] != cl.CustomList(lists[1]))
 
 
+class TestCustomListLT(TestCustomList):
+    def test_lt_simple(self):
+        my_list_1 = cl.CustomList([2])
+        my_list_2 = cl.CustomList([1])
+        self.assertFalse(my_list_1 < my_list_2)
+        self.assertTrue(my_list_2 < my_list_1)
+
+
+class TestCustomListLE(TestCustomList):
+    pass
+
+
+class TestCustomListGT(TestCustomList):
+    pass
+
+
+class TestCustomListGE(TestCustomList):
+    pass
 
 
 if __name__ == "__main__":
