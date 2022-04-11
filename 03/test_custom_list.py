@@ -207,7 +207,7 @@ class TestCustomListNE(TestCustomList):
     def test_ne_simple(self):
         self.assertFalse(cl.CustomList([1, 2]) != cl.CustomList([0, 3]))
 
-    def test_eq_size_1(self):
+    def test_ne_size_1(self):
         for _ in range(10):
             value = random.randint(-1000000, 1000000)
             self.assertFalse(cl.CustomList([value]) != cl.CustomList([value]))
@@ -220,7 +220,7 @@ class TestCustomListNE(TestCustomList):
             self.assertTrue(cl.CustomList([value2]) != [value])
             self.assertTrue([value2] != cl.CustomList([value]))
 
-    def test_eq_size_2(self):
+    def test_ne_size_2(self):
         for _ in range(10):
             value_list1 = [random.randint(-1000000, 1000000), random.randint(-1000000, 1000000)]
             self.assertFalse(cl.CustomList(value_list1) != cl.CustomList(value_list1))
@@ -233,7 +233,7 @@ class TestCustomListNE(TestCustomList):
             self.assertTrue(cl.CustomList(value_list1) != value_list2)
             self.assertTrue(value_list2 != cl.CustomList(value_list1))
 
-    def test_eq_rand_size(self):
+    def test_ne_rand_size(self):
         for _ in range(10):
             sizes = [random.randint(1, 100), random.randint(1, 100)]
             lists = [[random.randint(-100000, 100000) for _ in range(sizes[i])] for i in range(2)]
@@ -245,6 +245,8 @@ class TestCustomListNE(TestCustomList):
                 self.assertTrue(cl.CustomList(lists[0]) != cl.CustomList(lists[1]))
                 self.assertTrue(cl.CustomList(lists[0]) != lists[1])
                 self.assertTrue(lists[0] != cl.CustomList(lists[1]))
+
+
 
 
 if __name__ == "__main__":
