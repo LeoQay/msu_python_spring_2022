@@ -22,13 +22,13 @@ class CustomList(list):
         return self.do_op(other, lambda a, b: a + b)
 
     def __radd__(self, other):
-        return self.__add__(other)
+        return self.do_op(other, lambda a, b: a + b)
 
     def __sub__(self, other):
         return self.do_op(other, lambda a, b: a - b)
 
     def __rsub__(self, other):
-        return self.__sub__(other)
+        return self.do_op(other, lambda a, b: b - a)
 
     def __lt__(self, other):
         return sum(self) < sum(other)
@@ -97,12 +97,14 @@ class CustomList(list):
 
     def append_zeros(self, amount: int):
         if amount < 0:
+            # if code is good, this line couldn't be reached
             raise ValueError("Negative argument")
         for _ in range(amount):
             self.append(0)
 
     def pop_back(self, amount: int):
         if amount < 0:
+            # if code is good, this line couldn't be reached
             raise ValueError("Negative argument")
         for _ in range(amount):
             self.pop(-1)
@@ -111,7 +113,4 @@ class CustomList(list):
 if __name__ == "__main__":
     cus1 = CustomList([1, 2, 3, 5])
     cus2 = CustomList([2, 3, 4])
-    print([1, 23] > cus1)
-    print([2, 3] + cus2)
-    print(cus1)
-    print(cus2)
+    print([1, 2, 3] - cus1)
