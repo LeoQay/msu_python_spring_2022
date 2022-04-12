@@ -5,24 +5,15 @@ class CustomList(list):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, *kwargs)
-        self.change_len = 0
-        self.self_up = False
-        self.oth_up = False
-
-    def reset_fields(self):
-        self.change_len = 0
-        self.self_up = False
-        self.oth_up = False
 
     def __str__(self):
-        result = super().__str__()
-        return f"{result}, sum={sum(self)}"
+        return f"{super().__str__()}, sum={sum(self)}"
 
     def __add__(self, other):
         return self.do_op(other, lambda a, b: a + b)
 
     def __radd__(self, other):
-        return self.do_op(other, lambda a, b: a + b)
+        return self.do_op(other, lambda a, b: b + a)
 
     def __sub__(self, other):
         return self.do_op(other, lambda a, b: a - b)
@@ -69,48 +60,17 @@ class CustomList(list):
     def do_op(self, other, operation):
         result = CustomList()
 
-        other = CustomList(other)
+        min_len = min(len(self), len(other))
+        max_len = max(len(self), len(other))
 
-        change_len = len(self) - len(other)
-        self_up = False
-        oth_up = False
+        for i in range(min_len):
+            result.append(operation(self[i], other[i]))
 
-        if change_len > 0:
-            oth_up = True
-            other.append_zeros(change_len)
-        elif change_len < 0:
-            self_up = True
-            change_len *= -1
-            self.append_zeros(change_len)
-
-        for self_val, other_val in zip(self, other):
-            result.append(operation(self_val, other_val))
-
-        if oth_up:
-            other.pop_back(change_len)
-        elif self_up:
-            self.pop_back(change_len)
-
-        self.reset_fields()
+        if len(self) > len(other):
+            for i in range(min_len, max_len):
+                result.append(operation(self[i], 0))
+        elif len(self) < len(other):
+            for i in range(min_len, max_len):
+                result.append(operation(0, other[i]))
 
         return result
-
-    def append_zeros(self, amount: int):
-        if amount < 0:
-            # if code is good, this line couldn't be reached
-            raise ValueError("Negative argument")
-        for _ in range(amount):
-            self.append(0)
-
-    def pop_back(self, amount: int):
-        if amount < 0:
-            # if code is good, this line couldn't be reached
-            raise ValueError("Negative argument")
-        for _ in range(amount):
-            self.pop(-1)
-
-
-if __name__ == "__main__":
-    cus1 = CustomList([1, 2, 3, 5])
-    cus2 = CustomList([2, 3, 4])
-    print([1, 2, 3] == cus1)

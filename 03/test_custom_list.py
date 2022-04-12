@@ -1,6 +1,5 @@
 import unittest
 import custom_list as cl
-import random
 
 
 class TestCustomList(unittest.TestCase):
@@ -164,43 +163,28 @@ class TestCustomListEQ(TestCustomList):
         self.assertTrue(cl.CustomList([1, 2]) == cl.CustomList([0, 3]))
 
     def test_eq_size_1(self):
-        for _ in range(10):
-            value = random.randint(-1000000, 1000000)
-            self.assertTrue(cl.CustomList([value]) == cl.CustomList([value]))
-            self.assertTrue(cl.CustomList([value]) == [value])
-            self.assertTrue([value] == cl.CustomList([value]))
-            value2 = value
-            while value2 == value:
-                value2 = random.randint(-1000000, 1000000)
-            self.assertFalse(cl.CustomList([value]) == cl.CustomList([value2]))
-            self.assertFalse(cl.CustomList([value2]) == [value])
-            self.assertFalse([value2] == cl.CustomList([value]))
+        self.assertTrue(cl.CustomList([10]) == cl.CustomList([10]))
+        self.assertTrue(cl.CustomList([100]) == [100])
+        self.assertTrue([-23] == cl.CustomList([-23]))
+        self.assertFalse(cl.CustomList([1]) == cl.CustomList([2]))
+        self.assertFalse(cl.CustomList([-2]) == [22])
+        self.assertFalse([4] == cl.CustomList([3]))
 
     def test_eq_size_2(self):
-        for _ in range(10):
-            value_list1 = [random.randint(-1000000, 1000000), random.randint(-1000000, 1000000)]
-            self.assertTrue(cl.CustomList(value_list1) == cl.CustomList(value_list1))
-            self.assertTrue(cl.CustomList(value_list1) == value_list1)
-            self.assertTrue(value_list1 == cl.CustomList(value_list1))
-            value_list2 = value_list1
-            while sum(value_list2) == sum(value_list1):
-                value_list2 = [random.randint(-1000000, 1000000), random.randint(-1000000, 1000000)]
-            self.assertFalse(cl.CustomList(value_list1) == cl.CustomList(value_list2))
-            self.assertFalse(cl.CustomList(value_list1) == value_list2)
-            self.assertFalse(value_list2 == cl.CustomList(value_list1))
+        self.assertTrue(cl.CustomList([1, 3]) == cl.CustomList([2, 2]))
+        self.assertTrue(cl.CustomList([1, 5]) == [3, 3])
+        self.assertTrue([2, -20] == cl.CustomList([-10, -8]))
+        self.assertFalse(cl.CustomList([1, 5]) == cl.CustomList([1, 4]))
+        self.assertFalse(cl.CustomList([-2, 3]) == [34, -32])
+        self.assertFalse([1, 45] == cl.CustomList([5, 23]))
 
-    def test_eq_rand_size(self):
-        for _ in range(10):
-            sizes = [random.randint(1, 100), random.randint(1, 100)]
-            lists = [[random.randint(-100000, 100000) for _ in range(sizes[i])] for i in range(2)]
-            if sum(lists[0]) == sum(lists[1]):
-                self.assertTrue(cl.CustomList(lists[0]) == cl.CustomList(lists[1]))
-                self.assertTrue(cl.CustomList(lists[0]) == lists[1])
-                self.assertTrue(lists[0] == cl.CustomList(lists[1]))
-            else:
-                self.assertFalse(cl.CustomList(lists[0]) == cl.CustomList(lists[1]))
-                self.assertFalse(cl.CustomList(lists[0]) == lists[1])
-                self.assertFalse(lists[0] == cl.CustomList(lists[1]))
+    def test_eq_diff_size(self):
+        self.assertTrue(cl.CustomList([1, 2, 0, 0, 0, -1, 0, 1, 0, 3]) == cl.CustomList([1, 2, 3]))
+        self.assertTrue(cl.CustomList([2, 10, -8]) == [2, -3, -12, 10, 7])
+        self.assertTrue([10] == cl.CustomList([1, 1, 1, 1, 0, -1, 7]))
+        self.assertFalse(cl.CustomList([1, 2, 3]) == cl.CustomList([1, 2, 3, 1]))
+        self.assertFalse(cl.CustomList([2, 1, -12]) == [1, 2, 1, -12])
+        self.assertFalse([2, 3, 1, 2] == cl.CustomList([1, -12, 12, 123, -123, 10]))
 
 
 class TestCustomListNE(TestCustomList):
@@ -208,43 +192,28 @@ class TestCustomListNE(TestCustomList):
         self.assertFalse(cl.CustomList([1, 2]) != cl.CustomList([0, 3]))
 
     def test_ne_size_1(self):
-        for _ in range(10):
-            value = random.randint(-1000000, 1000000)
-            self.assertFalse(cl.CustomList([value]) != cl.CustomList([value]))
-            self.assertFalse(cl.CustomList([value]) != [value])
-            self.assertFalse([value] != cl.CustomList([value]))
-            value2 = value
-            while value2 == value:
-                value2 = random.randint(-1000000, 1000000)
-            self.assertTrue(cl.CustomList([value]) != cl.CustomList([value2]))
-            self.assertTrue(cl.CustomList([value2]) != [value])
-            self.assertTrue([value2] != cl.CustomList([value]))
+        self.assertFalse(cl.CustomList([10]) != cl.CustomList([10]))
+        self.assertFalse(cl.CustomList([100]) != [100])
+        self.assertFalse([-23] != cl.CustomList([-23]))
+        self.assertTrue(cl.CustomList([1]) != cl.CustomList([2]))
+        self.assertTrue(cl.CustomList([-2]) != [22])
+        self.assertTrue([4] != cl.CustomList([3]))
 
     def test_ne_size_2(self):
-        for _ in range(10):
-            value_list1 = [random.randint(-1000000, 1000000), random.randint(-1000000, 1000000)]
-            self.assertFalse(cl.CustomList(value_list1) != cl.CustomList(value_list1))
-            self.assertFalse(cl.CustomList(value_list1) != value_list1)
-            self.assertFalse(value_list1 != cl.CustomList(value_list1))
-            value_list2 = value_list1
-            while sum(value_list2) == sum(value_list1):
-                value_list2 = [random.randint(-1000000, 1000000), random.randint(-1000000, 1000000)]
-            self.assertTrue(cl.CustomList(value_list1) != cl.CustomList(value_list2))
-            self.assertTrue(cl.CustomList(value_list1) != value_list2)
-            self.assertTrue(value_list2 != cl.CustomList(value_list1))
+        self.assertFalse(cl.CustomList([1, 3]) != cl.CustomList([2, 2]))
+        self.assertFalse(cl.CustomList([1, 5]) != [3, 3])
+        self.assertFalse([2, -20] != cl.CustomList([-10, -8]))
+        self.assertTrue(cl.CustomList([1, 5]) != cl.CustomList([1, 4]))
+        self.assertTrue(cl.CustomList([-2, 3]) != [34, -32])
+        self.assertTrue([1, 45] != cl.CustomList([5, 23]))
 
-    def test_ne_rand_size(self):
-        for _ in range(10):
-            sizes = [random.randint(1, 100), random.randint(1, 100)]
-            lists = [[random.randint(-100000, 100000) for _ in range(sizes[i])] for i in range(2)]
-            if sum(lists[0]) == sum(lists[1]):
-                self.assertFalse(cl.CustomList(lists[0]) != cl.CustomList(lists[1]))
-                self.assertFalse(cl.CustomList(lists[0]) != lists[1])
-                self.assertFalse(lists[0] != cl.CustomList(lists[1]))
-            else:
-                self.assertTrue(cl.CustomList(lists[0]) != cl.CustomList(lists[1]))
-                self.assertTrue(cl.CustomList(lists[0]) != lists[1])
-                self.assertTrue(lists[0] != cl.CustomList(lists[1]))
+    def test_ne_diff_size(self):
+        self.assertFalse(cl.CustomList([1, 2, 0, 0, 0, -1, 0, 1, 0, 3]) != cl.CustomList([1, 2, 3]))
+        self.assertFalse(cl.CustomList([2, 10, -8]) != [2, -3, -12, 10, 7])
+        self.assertFalse([10] != cl.CustomList([1, 1, 1, 1, 0, -1, 7]))
+        self.assertTrue(cl.CustomList([1, 2, 3]) != cl.CustomList([1, 2, 3, 1]))
+        self.assertTrue(cl.CustomList([2, 1, -12]) != [1, 2, 1, -12])
+        self.assertTrue([2, 3, 1, 2] != cl.CustomList([1, -12, 12, 123, -123, 10]))
 
 
 class TestCustomListLT(TestCustomList):
