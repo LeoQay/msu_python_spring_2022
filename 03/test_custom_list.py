@@ -300,11 +300,55 @@ class TestCustomListLE(TestCustomList):
 
 
 class TestCustomListGT(TestCustomList):
-    pass
+    def test_gt_simple(self):
+        my_list_1 = cl.CustomList([2])
+        my_list_2 = cl.CustomList([1])
+        self.assertTrue(my_list_1 > my_list_2)
+        self.assertFalse(my_list_2 > my_list_1)
+
+    def test_gt_diff_len(self):
+        my_list_1 = cl.CustomList([10, 2, 3, 2])
+        my_list_2 = cl.CustomList([-2, 1, 1])
+        self.assertTrue(my_list_1 > my_list_2)
+        self.assertFalse(my_list_2 > my_list_1)
+
+    def test_gt_near_value(self):
+        my_list_1 = cl.CustomList([-21, 22])
+        my_list_2 = cl.CustomList([-1, 20, -19])
+        self.assertTrue(my_list_1 > my_list_2)
+        self.assertFalse(my_list_2 > my_list_1)
+
+    def test_gt_equal_value(self):
+        my_list_1 = cl.CustomList([40, 22])
+        my_list_2 = cl.CustomList([-28, 85, 5])
+        self.assertFalse(my_list_1 > my_list_2)
+        self.assertFalse(my_list_2 > my_list_1)
 
 
 class TestCustomListGE(TestCustomList):
-    pass
+    def test_ge_simple(self):
+        my_list_1 = cl.CustomList([2])
+        my_list_2 = cl.CustomList([1])
+        self.assertTrue(my_list_1 >= my_list_2)
+        self.assertFalse(my_list_2 >= my_list_1)
+
+    def test_ge_diff_len(self):
+        my_list_1 = cl.CustomList([10, 2, 3, 2])
+        my_list_2 = cl.CustomList([-2, 1, 1])
+        self.assertTrue(my_list_1 >= my_list_2)
+        self.assertFalse(my_list_2 >= my_list_1)
+
+    def test_ge_near_value(self):
+        my_list_1 = cl.CustomList([-21, 22])
+        my_list_2 = cl.CustomList([-1, 20, -19])
+        self.assertTrue(my_list_1 >= my_list_2)
+        self.assertFalse(my_list_2 >= my_list_1)
+
+    def test_ge_equal_value(self):
+        my_list_1 = cl.CustomList([40, 22])
+        my_list_2 = cl.CustomList([-28, 85, 5])
+        self.assertTrue(my_list_1 >= my_list_2)
+        self.assertTrue(my_list_2 >= my_list_1)
 
 
 if __name__ == "__main__":
