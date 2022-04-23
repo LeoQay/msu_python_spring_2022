@@ -16,7 +16,10 @@ class CustomMeta(type):
         class_dict = new_dict
 
         def setter(self, nam, val):
-            self.__dict__["custom_" + nam] = val
+            if nam in self.__dict__:
+                self.__dict__[nam] = val
+            else:
+                self.__dict__["custom_" + nam] = val
 
         class_dict['__setattr__'] = setter
         cls = super().__new__(mcs, name, bases, class_dict)
@@ -31,4 +34,4 @@ class CustomMeta(type):
 
     @classmethod
     def __prepare__(mcs, name, bases, **kwargs):
-        return {}
+        return super().__prepare__(name, bases, **kwargs)
