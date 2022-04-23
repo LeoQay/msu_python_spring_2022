@@ -5,26 +5,26 @@ def is_magic(name: str) -> bool:
 
 
 class CustomMeta(type):
-    def __new__(mcs, name, bases, classdict, **kwargs):
+    def __new__(mcs, name, bases, class_dict, **kwargs):
         new_dict = {}
-        for key in classdict.keys():
-            value = classdict[key]
+        for key in class_dict.keys():
+            value = class_dict[key]
             if is_magic(key):
                 new_dict[key] = value
             else:
                 new_dict['custom_' + key] = value
-        classdict = new_dict
+        class_dict = new_dict
 
         def setter(self, nam, val):
             self.__dict__["custom_" + nam] = val
 
-        classdict['__setattr__'] = setter
-        cls = super().__new__(mcs, name, bases, classdict)
+        class_dict['__setattr__'] = setter
+        cls = super().__new__(mcs, name, bases, class_dict)
 
         return cls
 
-    def __init__(cls, name, bases, classdict, **kwargs):
-        super().__init__(name, bases, classdict, **kwargs)
+    def __init__(cls, name, bases, class_dict, **kwargs):
+        super().__init__(name, bases, class_dict, **kwargs)
 
     def __call__(cls, *args, **kwargs):
         return super().__call__(*args, **kwargs)

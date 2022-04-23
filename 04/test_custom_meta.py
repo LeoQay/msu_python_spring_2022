@@ -10,7 +10,8 @@ class TestCustomMeta(unittest.TestCase):
             def __init__(self, val=99):
                 self.val = val
 
-            def line(self):
+            @staticmethod
+            def line():
                 return 100
 
             def __str__(self):
@@ -22,8 +23,10 @@ class TestCustomMeta(unittest.TestCase):
         self.assertRaises((AttributeError,), lambda: obj.val)
         self.assertEqual(obj.custom_val, 23)
         self.assertEqual(obj.custom_x, 50)
+
         self.assertRaises((AttributeError,), lambda: obj.line)
         self.assertEqual(obj.custom_line(), 100)
+
         self.assertEqual(str(obj), 'Custom_by_metaclass')
 
         obj.dynamic = 45
