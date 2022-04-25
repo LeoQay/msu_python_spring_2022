@@ -18,19 +18,6 @@ class Node:
     pair: Any = None
 
 
-class Ptr:
-    def __init__(self, val_list=None):
-        self._ptr = val_list
-
-    @property
-    def ptr(self):
-        return self._ptr[0] if self._ptr is not None else None
-
-    @ptr.setter
-    def ptr(self, value):
-        self._ptr[0] = value
-
-
 class MyList:
     def __init__(self):
         self.first = None
