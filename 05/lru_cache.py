@@ -97,6 +97,11 @@ class LRUCache:
         return node.pair.value
 
     def __setitem__(self, key, value):
+        if key in self.arr:
+            node = self.arr[key]
+            node.pair.value = value
+            self.update_used(node)
+            return
         self.pop()
         node = Node(pair=Pair(key, value))
         self.queue.push_back(node)

@@ -54,6 +54,61 @@ class TestLRUCache(unittest.TestCase):
             cache[i] = value
             self.assertEqual(cache[i], value)
 
+    def test_full_replacement(self):
+        cache = LRUCache(5)
+
+        cache['k1'] = 'val1'
+        cache['k2'] = 'val2'
+        cache['k3'] = 'val3'
+        cache['k4'] = 'val4'
+        cache['k5'] = 'val5'
+
+        self.assertEqual(cache['k5'], 'val5')
+        self.assertEqual(cache['k4'], 'val4')
+        self.assertEqual(cache['k3'], 'val3')
+        self.assertEqual(cache['k2'], 'val2')
+        self.assertEqual(cache['k1'], 'val1')
+
+        cache['k6'] = 'val6'
+        self.assertEqual(cache['k5'], None)
+        cache['k7'] = 'val7'
+        self.assertEqual(cache['k4'], None)
+        cache['k8'] = 'val8'
+        self.assertEqual(cache['k3'], None)
+        cache['k9'] = 'val9'
+        self.assertEqual(cache['k2'], None)
+        cache['k10'] = 'val10'
+        self.assertEqual(cache['k1'], None)
+
+        self.assertEqual(cache['k6'], 'val6')
+        self.assertEqual(cache['k7'], 'val7')
+        self.assertEqual(cache['k8'], 'val8')
+        self.assertEqual(cache['k9'], 'val9')
+        self.assertEqual(cache['k10'], 'val10')
+
+    def test_del_sequence_1(self):
+        cache = LRUCache(5)
+        for i in range(5):
+            cache['key' + str(i)] = 'val' + str(i)
+        cache['key0'] = 'Now I am newest'
+        cache['key100'] = 'I displace key1'
+        self.assertEqual(cache['key0'], 'Now I am newest')
+        self.assertEqual(cache['key1'], None)
+        self.assertEqual(cache['key100'], 'I displace key1')
+        for i in range(2, 4):
+            self.assertEqual(cache['key' + str(i)], 'val' + str(i))
+
+    def test_del_sequence_2(self):
+        cache = LRUCache(5)
+        for i in range(5):
+            cache['key' + str(i)] = 'val' + str(i)
+        # last used here 0 1 2 3 4 first used here
+        for i in range(4, -1, -1):
+            cache['key' + str(i)] = 'value' + str(i)
+        # last used here 4 3 2 1 0 first used here
+        cache['new_key'] = 'I displace key4'
+
+
 
 if __name__ == "__main__":
     unittest.main()
