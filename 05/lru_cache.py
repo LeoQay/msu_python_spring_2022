@@ -7,9 +7,6 @@ class Pair:
     key: Any
     value: Any
 
-    def __hash__(self):
-        return hash(self.key)
-
 
 @dataclass
 class Node:
@@ -39,7 +36,7 @@ class MyList:
     def pop_front(self):
         if self.first is None:
             raise KeyError
-        elif self.first is self.last:
+        if self.first is self.last:
             first = self.first
             self.first = None
             self.last = None
@@ -53,7 +50,7 @@ class MyList:
     def pop_back(self):
         if self.first is None:
             raise KeyError
-        elif self.first is self.last:
+        if self.first is self.last:
             last = self.last
             self.first = None
             self.last = None
@@ -90,7 +87,7 @@ class LRUCache:
     def __init__(self, size=50):
         self.size = size
         self.queue = MyList()
-        self.arr = dict()
+        self.arr = {}
 
     def __getitem__(self, key):
         if key not in self.arr:
