@@ -1,0 +1,6 @@
+https://github.com/mailcourses/deep_python_spring_2022/tree/main/lesson-06
+https://leetcode.com
+https://stackoverflow.com/questions/28396036/python-3-4-urllib-request-error-http-403
+https://en.wikipedia.org/wiki/Wikipedia
+https://en.wikipedia.org/wiki/Brave_(web_browser)#Basic_Attention_Token
+https://stackoverflow.com/questions/22110294/how-to-use-grep-for-collecting-url-links

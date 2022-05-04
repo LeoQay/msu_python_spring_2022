@@ -2,10 +2,10 @@ import threading
 import socket
 import sys
 import argparse
-from urllib.request import urlopen
 from bs4 import BeautifulSoup
 import json
 from collections import Counter
+import urllib.request
 
 
 def worker(num: int, top_k: int, info, locks: list[threading.Semaphore]):
@@ -20,8 +20,8 @@ def worker(num: int, top_k: int, info, locks: list[threading.Semaphore]):
         # processing url
         url = info[num]['url']
 
-        response = urlopen(url)
-        text = response.read().decode()
+        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+        text = urllib.request.urlopen(req).read().decode(encoding='utf-8')
         soup = BeautifulSoup(text, features='html.parser')
         stat = Counter(soup.get_text().split()).most_common(top_k)
         str_stat = json.dumps(stat)
@@ -76,8 +76,10 @@ def get_args():
 
 def main():
     args = get_args()
+    flag = False
     try:
         sock = socket.socket()
+        flag = True
         sock.bind(('', 9080))
         sock.listen(1)
 
@@ -85,7 +87,8 @@ def main():
     except KeyboardInterrupt:
         pass
     finally:
-        sock.close()
+        if flag:
+            sock.close()
 
 
 if __name__ == "__main__":
