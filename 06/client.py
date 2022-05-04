@@ -21,28 +21,30 @@ def thread_client(urls: deque[str], urls_lock, print_lock):
         data = sock.recv(100000).decode(encoding='utf-8')
 
         print_lock.acquire()
-        print('{0}:\n{1}\n'.format(url.strip(), data.strip()))
+        print(f'{url.strip()}:\n{data.strip()}\n')
         print_lock.release()
 
         sock.close()
 
 
-def client(m, text):
+def client(members, text):
     # shared resource
-    urls = deque([url for url in open(text)])
+    with open(text, encoding='utf-8') as file:
+        urls = deque(list(file))
+
     urls_lock = threading.Semaphore(1)
     print_lock = threading.Semaphore(1)
 
     threads = [
         threading.Thread(target=thread_client, args=(urls, urls_lock, print_lock))
-        for _ in range(m)
+        for _ in range(members)
     ]
 
-    for th in threads:
-        th.start()
+    for thread in threads:
+        thread.start()
 
-    for th in threads:
-        th.join()
+    for thread in threads:
+        thread.join()
 
 
 def get_args():

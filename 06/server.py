@@ -2,10 +2,10 @@ import threading
 import socket
 import sys
 import argparse
-from bs4 import BeautifulSoup
 import json
 from collections import Counter
 import urllib.request
+from bs4 import BeautifulSoup
 
 
 def worker(num: int, top_k: int, info, locks: list[threading.Semaphore]):
@@ -53,11 +53,11 @@ def master(workers_amount: int, top_k: int, sock):
         for i in range(workers_amount)
     ]
 
-    for th in threads:
-        th.start()
+    for thread in threads:
+        thread.start()
 
     while True:
-        conn, address = sock.accept()
+        conn, _ = sock.accept()
         url = conn.recv(1024).decode()
         free_num = None
         while free_num is None:
