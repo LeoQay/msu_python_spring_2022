@@ -20,13 +20,17 @@ def worker(num: int, top_k: int, info, locks: list[threading.Semaphore]):
         # processing url
         url = info[num]['url']
 
-        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-        text = urllib.request.urlopen(req).read().decode(encoding='utf-8')
-        soup = BeautifulSoup(text, features='html.parser')
-        stat = Counter(soup.get_text().split()).most_common(top_k)
-        str_stat = json.dumps(stat)
+        try:
+            req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+            text = urllib.request.urlopen(req).read().decode(encoding='utf-8')
+            soup = BeautifulSoup(text, features='html.parser')
+            stat = Counter(soup.get_text().split()).most_common(top_k)
+            str_stat = json.dumps(stat)
 
-        client.sendall(str_stat.encode())
+            client.sendall(str_stat.encode())
+        except BaseException:
+            print('Server: error when processed:', url)
+            client.close()
 
         info[num]['client'] = None
         info[num]['url'] = None

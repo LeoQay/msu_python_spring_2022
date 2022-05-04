@@ -21,7 +21,7 @@ def thread_client(urls: deque[str], urls_lock, print_lock):
         data = sock.recv(100000).decode(encoding='utf-8')
 
         print_lock.acquire()
-        print('{}: {}'.format(url, data))
+        print('{0}:\n{1}\n'.format(url.strip(), data.strip()))
         print_lock.release()
 
         sock.close()
