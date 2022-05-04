@@ -130,7 +130,6 @@ https://www.networkworld.com/article/3030134/microsoft-subnet/benchmark-tests-br
 https://web.archive.org/web/20200128195640/
 https://en.wikiversity.org/wiki/Brave_Browser
 https://id.wikipedia.org/wiki/Brave_(peramban_web)
-https://www.wikidata.org/wiki/Special:EntityPage/Q22906900#sitelinks-wikipedia
 https://www.engadget.com/2017/06/01/brave-browser-35-million-cryptocurrency/
 https://www.theverge.com/2021/4/22/22395997/epic-games-store-pc-apps-windows-store-brave-discord-itch
 https://web.archive.org/web/20180108014205/
@@ -215,7 +214,6 @@ https://web.archive.org/web/20210414105727/
 https://www.zdnet.com/article/best-browser-for-privacy/
 https://web.archive.org/web/20190701150020/
 https://web.archive.org/web/20181224011529/
-https://www.theblockcrypto.com/daily/5839/brave-browser-is-collecting-donations-on-your-behalf-did-you-know
 https://nl.wikipedia.org/wiki/Brave_(webbrowser)
 https://web.archive.org/web/20210116122847/
 https://web.archive.org/web/20211005114256/

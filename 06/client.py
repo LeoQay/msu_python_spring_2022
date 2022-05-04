@@ -16,9 +16,13 @@ def thread_client(urls: deque[str], urls_lock, print_lock):
         urls_lock.release()
 
         sock = socket.socket()
-        sock.connect(('', 9080))
-        sock.sendall(url.encode(encoding='utf-8'))
-        data = sock.recv(100000).decode(encoding='utf-8')
+        try:
+            sock.connect(('', 9080))
+            sock.sendall(url.encode(encoding='utf-8'))
+            data = sock.recv(100000).decode(encoding='utf-8')
+        except BaseException:
+            sock.close()
+            return
 
         print_lock.acquire()
         print(f'{url.strip()}:\n{data.strip()}\n')

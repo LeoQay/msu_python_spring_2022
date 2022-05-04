@@ -8,7 +8,7 @@ import urllib.request
 from bs4 import BeautifulSoup
 
 
-def worker(num: int, top_k: int, info, locks: list[threading.Semaphore]):
+def worker(num: int, top_k: int, info, locks, print_info):
     while True:
         locks[num].acquire()
 
@@ -29,8 +29,14 @@ def worker(num: int, top_k: int, info, locks: list[threading.Semaphore]):
 
             client.sendall(str_stat.encode())
         except BaseException:
-            print('Server: error when processed:', url)
+            print('Server: error when processed:', url.strip(), end='\n\n')
+        finally:
             client.close()
+
+        print_info['lock'].acquire()
+        print_info['count'] += 1
+        print('Server: urls processed:', print_info['count'])
+        print_info['lock'].release()
 
         info[num]['client'] = None
         info[num]['url'] = None
@@ -43,13 +49,20 @@ def master(workers_amount: int, top_k: int, sock):
         for _ in range(workers_amount)
     ]
 
+    print_info = {
+        'count': 0,
+        'lock': threading.Semaphore(1)
+    }
+
     locks = [
         threading.Semaphore(0)
         for _ in range(workers_amount)
     ]
 
     threads = [
-        threading.Thread(target=worker, args=(i, top_k, info, locks), daemon=True)
+        threading.Thread(target=worker,
+                         args=(i, top_k, info, locks, print_info),
+                         daemon=True)
         for i in range(workers_amount)
     ]
 
@@ -80,19 +93,16 @@ def get_args():
 
 def main():
     args = get_args()
-    flag = False
+
+    sock = socket.socket()
     try:
-        sock = socket.socket()
-        flag = True
         sock.bind(('', 9080))
         sock.listen(1)
-
         master(args['w'], args['k'], sock)
     except KeyboardInterrupt:
         pass
     finally:
-        if flag:
-            sock.close()
+        sock.close()
 
 
 if __name__ == "__main__":
