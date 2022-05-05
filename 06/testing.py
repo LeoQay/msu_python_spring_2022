@@ -3,14 +3,21 @@ import os
 import unittest
 import server as sv
 import client as cl
+from time import sleep
+
+
+def clear_file(file_name):
+    with open(file_name, 'w', encoding='utf-8'):
+        pass
 
 
 class Testing(unittest.TestCase):
-    def check_file_empty(self, file_name):
-        with open(file_name, 'r') as file:
-            for line in file:
-                if line.strip() != '':
-                    self.assertTrue(False)
+    def check_file_content(self, file_name, correct_lines):
+        with open(file_name, 'r', encoding='utf-8') as out:
+            lines = out.readlines()
+        self.assertEqual(len(lines), len(correct_lines))
+        for line, correct in zip(lines, correct_lines):
+            self.assertEqual(line.strip(), correct.strip())
 
     def test_1(self):
         """
@@ -18,34 +25,87 @@ class Testing(unittest.TestCase):
         """
         server_file = 'server_test_1.txt'
         client_file = 'client_test_1.txt'
+        urls = 'for_test_1.txt'
 
         server = multiprocessing.Process(
             target=sv.main,
-            args=(['server', '-w', '1', '-k', '1'], server_file),
+            args=(['server', '-w', '1', '-k', '1', '-a', '9080'], server_file),
         )
 
-        with open('for_test_1.txt', 'w'):
-            pass
+        clear_file(client_file)
+        clear_file(server_file)
+        clear_file(urls)
 
         client = multiprocessing.Process(
             target=cl.main,
-            args=(['client', '1', 'for_test_1.txt'], client_file)
+            args=(['client', '1', '-a', '9080', urls], client_file)
         )
 
         server.start()
-
         client.start()
         client.join()
-
-        server.terminate()
+        sleep(1)
+        server.kill()
 
         try:
-            self.check_file_empty('server_test_1.txt')
-            self.check_file_empty('client_test_1.txt')
+            self.check_file_content(server_file, [])
+            self.check_file_content(client_file, [])
         finally:
-            os.remove('server_test_1.txt')
-            os.remove('client_test_1.txt')
-            os.remove('for_test_1.txt')
+            os.remove(server_file)
+            os.remove(client_file)
+            os.remove(urls)
+
+    def one_url_test(self, address, url, top, correct_server, correct_client):
+        server_file = 'server_test.txt'
+        client_file = 'client_test.txt'
+        urls = 'for_test.txt'
+
+        clear_file(server_file)
+        clear_file(client_file)
+        with open(urls, 'w') as out:
+            print(url, file=out)
+
+        server = multiprocessing.Process(
+            target=sv.main,
+            args=(['server', '-w', '1', '-k', str(top), '-a', str(address)], server_file),
+        )
+
+        client = multiprocessing.Process(
+            target=cl.main,
+            args=(['client', '1', '-a', str(address), urls], client_file)
+        )
+
+        server.start()
+        client.start()
+        client.join()
+        sleep(1)
+        server.kill()
+
+        try:
+            self.check_file_content(server_file, correct_server)
+            self.check_file_content(client_file, correct_client)
+        finally:
+            os.remove(client_file)
+            os.remove(server_file)
+            os.remove(urls)
+
+    def test_2(self):
+        self.one_url_test(9081,
+                          'https://en.wikipedia.org/wiki/Wikipedia',
+                          10,
+                          ['Server: urls processed: 1'],
+                          ['https://en.wikipedia.org/wiki/Wikipedia:',
+                           '[["the", 900], ["of", 793], ["and", 476], ["Wikipedia", 449], ["^", 395], '
+                           '["to", 385], ["in", 370], ["a", 364], ["on", 285], ["Retrieved", 279]]', '']
+                          )
+
+    def test_3(self):
+        self.one_url_test(9082,
+                          'https://leetcode.com',
+                          3,
+                          ['Server: urls processed: 1'],
+                          ['https://leetcode.com:',
+                           '[["|", 5], ["LeetCode", 2], ["-", 1]]', ''])
 
 
 if __name__ == "__main__":
