@@ -8,7 +8,7 @@ import urllib.request
 from bs4 import BeautifulSoup
 
 
-def worker(num: int, top_k: int, info, locks, print_info):
+def worker(num: int, top_k: int, info, locks, print_info, out):
     while True:
         locks[num].acquire()
 
@@ -43,7 +43,7 @@ def worker(num: int, top_k: int, info, locks, print_info):
         info[num]['free'] = True
 
 
-def master(workers_amount: int, top_k: int, sock):
+def master(workers_amount: int, top_k: int, sock, out):
     info = [
         {'free': True, 'stop': False, 'url': None, 'client': None}
         for _ in range(workers_amount)
@@ -61,7 +61,7 @@ def master(workers_amount: int, top_k: int, sock):
 
     threads = [
         threading.Thread(target=worker,
-                         args=(i, top_k, info, locks, print_info),
+                         args=(i, top_k, info, locks, print_info, out),
                          daemon=True)
         for i in range(workers_amount)
     ]
@@ -84,26 +84,32 @@ def master(workers_amount: int, top_k: int, sock):
         locks[free_num].release()
 
 
-def get_args():
+def get_args(argv):
     parser = argparse.ArgumentParser()
     parser.add_argument('-w', type=int, default=10)
     parser.add_argument('-k', type=int, default=7)
-    return parser.parse_args(args=sys.argv[1:]).__dict__
+    return parser.parse_args(args=argv[1:]).__dict__
 
 
-def main():
-    args = get_args()
+def main(argv, out_name):
+    args = get_args(argv)
+
+    if out_name == 'stdout':
+        out = sys.stdout
+    else:
+        out = open(out_name, 'w', encoding='utf-8')
 
     sock = socket.socket()
     try:
         sock.bind(('', 9080))
         sock.listen(1)
-        master(args['w'], args['k'], sock)
+        master(args['w'], args['k'], sock, out)
     except KeyboardInterrupt:
         pass
     finally:
+        out.close()
         sock.close()
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv, sys.stdout)
