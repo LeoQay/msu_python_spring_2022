@@ -44,7 +44,7 @@ class Testing(unittest.TestCase):
         server.start()
         client.start()
         client.join()
-        sleep(1)
+        sleep(0.1)
         server.kill()
 
         try:
@@ -78,7 +78,7 @@ class Testing(unittest.TestCase):
         server.start()
         client.start()
         client.join()
-        sleep(1)
+        sleep(0.1)
         server.kill()
 
         try:
