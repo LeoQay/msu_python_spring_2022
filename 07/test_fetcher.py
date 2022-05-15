@@ -29,6 +29,24 @@ class TestFetcher(unittest.TestCase):
         }
         self.assertEqual(result, res)
 
+    def test_4(self):
+        args = {'c': 15, 'urls': 'files/for_test_4.txt'}
+        result = asyncio.run(fetcher.main(args))
+        res = {
+            "https://archive.today/20170601123918/": {
+                "Not": 1,
+                "Found": 1
+            },
+            "https://web.archive.org/web/20210729085751/": {
+                "of": 19,
+                "icon": 15,
+                "An": 14,
+                "a": 13,
+                "illustration": 13
+            }
+        }
+        self.assertEqual(result, res)
+
 
 if __name__ == "__main__":
     unittest.main()

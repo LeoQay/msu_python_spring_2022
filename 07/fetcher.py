@@ -7,15 +7,12 @@ from bs4 import BeautifulSoup
 from collections import Counter
 
 
-top_k = 5
-
-
 async def fetch_url(session, url, results):
     try:
         async with session.get(url) as response:
             data = await response.text()
             soup = BeautifulSoup(data, features='html.parser')
-            stat = Counter(soup.get_text().split()).most_common(top_k)
+            stat = Counter(soup.get_text().split()).most_common(5)
             results[url] = {pair[0]: pair[1] for pair in stat}
     except BaseException as e:
         results[url] = str(e)
