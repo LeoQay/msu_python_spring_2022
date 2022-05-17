@@ -1,39 +1,64 @@
 import cProfile
+import io
+import pstats
+from memory_profiler import profile
 import weakref
-from lru_cache import LRUCache
+from pandas import read_csv
 from dataclasses import dataclass
+from lru_cache import LRUCache
 
 
 @dataclass
 class CommonStudent:
-    year: int
     name: str
-    average_score: float
+    year: int
+    score: float
 
 
 class SlotStudent:
     __slots__ = [
-        'year',
         'name',
+        'year',
         'average_score'
     ]
 
 
-def with_weak_ref():
+@profile
+def with_weak_ref(file_name):
     pass
 
 
-def with_slots():
+@profile
+def with_slots(file_name):
     pass
 
 
-def with_common():
-    pass
+@profile
+def with_common(file_name):
+    file = read_csv(file_name)
+    cache = LRUCache(100)
+    for i in range(100):
+        cache[i] = CommonStudent(**dict(file.iloc[i]))
+    for i in range(50, 150):
+        cache[i] = CommonStudent(**dict(file.iloc[i + 200]))
+    for i in range(1000):
+        cache[(500 + i) // 100] = CommonStudent(**dict(file.iloc[(i + 200) // 1000]))
 
 
-def main():
-    pass
+def c_profile_smth(func, *args, **kwargs):
+    pr = cProfile.Profile()
+    pr.enable()
+    func(*args, **kwargs)
+    pr.disable()
+    out = io.StringIO()
+    ps = pstats.Stats(pr, stream=out)
+    ps.print_stats()
+    print(out.getvalue())
+
+
+def main(file_name):
+    c_profile_smth(with_common, file_name)
 
 
 if __name__ == "__main__":
-    main()
+    main('students.scv')
