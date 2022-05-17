@@ -19,22 +19,17 @@ class SlotStudent:
     __slots__ = [
         'name',
         'year',
-        'average_score'
+        'score'
     ]
 
-
-@profile
-def with_weak_ref(file_name):
-    pass
-
-
-@profile
-def with_slots(file_name):
-    pass
+    def __init__(self, name, year, score):
+        self.name = name
+        self.year = year
+        self.score = score
 
 
 @profile
-def with_common(file_name):
+def common_profile(file_name):
     file = read_csv(file_name)
     cache = LRUCache(100)
     for i in range(100):
@@ -43,6 +38,18 @@ def with_common(file_name):
         cache[i] = CommonStudent(**dict(file.iloc[i + 200]))
     for i in range(1000):
         cache[(500 + i) // 100] = CommonStudent(**dict(file.iloc[(i + 200) // 1000]))
+
+
+@profile
+def slots_profile(file_name):
+    file = read_csv(file_name)
+    cache = LRUCache(100)
+    for i in range(100):
+        cache[i] = SlotStudent(**dict(file.iloc[i]))
+    for i in range(50, 150):
+        cache[i] = SlotStudent(**dict(file.iloc[i + 200]))
+    for i in range(1000):
+        cache[(500 + i) // 100] = SlotStudent(**dict(file.iloc[(i + 200) // 1000]))
 
 
 def c_profile_smth(func, *args, **kwargs):
@@ -57,7 +64,8 @@ def c_profile_smth(func, *args, **kwargs):
 
 
 def main(file_name):
-    c_profile_smth(with_common, file_name)
+    c_profile_smth(common_profile, file_name)
+    c_profile_smth(slots_profile, file_name)
 
 
 if __name__ == "__main__":
