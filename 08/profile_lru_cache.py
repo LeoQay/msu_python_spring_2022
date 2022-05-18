@@ -3,10 +3,10 @@ import cProfile
 import io
 import pstats
 import weakref
-from memory_profiler import profile
-from pandas import read_csv
 from dataclasses import dataclass
 from argparse import ArgumentParser
+from memory_profiler import profile
+from pandas import read_csv
 from lru_cache import LRUCache
 
 
@@ -64,13 +64,13 @@ def weak_ref_profile(file):
 
 
 def c_profile_smth(func, *args, **kwargs):
-    pr = cProfile.Profile()
-    pr.enable()
+    profiler = cProfile.Profile()
+    profiler.enable()
     func(*args, **kwargs)
-    pr.disable()
+    profiler.disable()
     out = io.StringIO()
-    ps = pstats.Stats(pr, stream=out)
-    ps.print_stats()
+    p_stats = pstats.Stats(profiler, stream=out)
+    p_stats.print_stats()
     print(out.getvalue())
 
 

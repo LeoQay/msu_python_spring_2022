@@ -9,11 +9,14 @@ import urllib.request
 from bs4 import BeautifulSoup
 
 
+global_stop = [False]
+
+
 def worker(num: int, top_k: int, info, locks, print_info):
     while True:
         locks[num].acquire()
 
-        if info[num]['stop']:
+        if global_stop[0]:
             return
 
         file_name = print_info['file']
@@ -25,7 +28,8 @@ def worker(num: int, top_k: int, info, locks, print_info):
 
         try:
             req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-            text = urllib.request.urlopen(req).read().decode(encoding='utf-8')
+            with urllib.request.urlopen(req) as resp:
+                text = resp.read().decode(encoding='utf-8')
             soup = BeautifulSoup(text, features='html.parser')
             stat = Counter(
                 soup.get_text().split()
@@ -59,19 +63,18 @@ def worker(num: int, top_k: int, info, locks, print_info):
         info[num]['free'] = True
 
 
+def get_connect(sock, timeout=1.):
+    sock.settimeout(timeout)
+    while not global_stop[0]:
+        try:
+            conn, _ = sock.accept()
+        except BaseException:
+            pass
+        else:
+            return conn
+
+
 def master(workers_amount: int, top_k: int, sock, out):
-    stop = [False]
-
-    def sigint_handler(signum, frame):
-        stop[0] = True
-
-    signal.signal(signal.SIGINT, sigint_handler)
-
-    info = [
-        {'free': True, 'stop': False, 'url': None, 'client': None}
-        for _ in range(workers_amount)
-    ]
-
     print_info = {
         'count': 0,
         'lock': threading.Semaphore(1),
@@ -83,6 +86,18 @@ def master(workers_amount: int, top_k: int, sock, out):
         for _ in range(workers_amount)
     ]
 
+    info = [
+        {'free': True, 'url': None, 'client': None}
+        for _ in range(workers_amount)
+    ]
+
+    def sigint_handler(signum, frame):
+        global_stop[0] = True
+        for i in range(workers_amount):
+            locks[i].release()
+
+    signal.signal(signal.SIGINT, sigint_handler)
+
     threads = [
         threading.Thread(target=worker,
                          args=(i, top_k, info, locks, print_info),
@@ -93,19 +108,27 @@ def master(workers_amount: int, top_k: int, sock, out):
     for thread in threads:
         thread.start()
 
-    while True:
-        conn, _ = sock.accept()
-        url = conn.recv(1024).decode(encoding='utf-8')
-        free_num = None
-        while free_num is None:
-            for i in range(workers_amount):
-                if info[i]['free']:
-                    free_num = i
-                    break
-        info[free_num]['free'] = False
-        info[free_num]['url'] = url
-        info[free_num]['client'] = conn
-        locks[free_num].release()
+    try:
+        while True:
+            conn = get_connect(sock)
+            if conn is None:
+                break
+            free_num = None
+            while free_num is None:
+                for i in range(workers_amount):
+                    if info[i]['free']:
+                        free_num = i
+                        break
+            info[free_num]['free'] = False
+            info[free_num]['url'] = conn.recv(1024).decode(encoding='utf-8')
+            info[free_num]['client'] = conn
+            locks[free_num].release()
+    finally:
+        sigint_handler(0, 0)
+
+    print('wait')
+    for thread in threads:
+        thread.join()
 
 
 def get_args(argv):
