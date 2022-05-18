@@ -15,7 +15,6 @@ class Testing(unittest.TestCase):
     def check_file_content(self, file_name, correct_lines):
         with open(file_name, 'r', encoding='utf-8') as out:
             lines = out.readlines()
-        print(lines)
         self.assertEqual(len(lines), len(correct_lines))
         for line, correct in zip(lines, correct_lines):
             self.assertEqual(line.strip(), correct.strip())
@@ -100,7 +99,7 @@ class Testing(unittest.TestCase):
                                          '[["the", 900], ["of", 793], ["and", 475],'
                                          ' ["Wikipedia", 448], ["^", 393], ["to", 383],'
                                          ' ["in", 369], ["a", 364], ["on", 285],'
-                                         ' ["Retrieved", 278]]']
+                                         ' ["Retrieved", 278]]', '']
                           }
                           )
 
