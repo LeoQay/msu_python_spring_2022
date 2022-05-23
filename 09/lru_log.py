@@ -1,5 +1,17 @@
 from dataclasses import dataclass
 from typing import Any
+import logging
+
+
+logging.basicConfig(
+    filename='cache.log',
+    level=logging.DEBUG,
+    filemode='w'
+)
+
+
+logger = logging.getLogger('cache.log')
+logger.setLevel(level=logging.DEBUG)
 
 
 @dataclass
@@ -85,6 +97,7 @@ class MyList:
 
 class LRUCache:
     def __init__(self, size=50):
+        logger.info(f'Init new LRUCache with size {size}')
         self.size = size
         self.queue = MyList()
         self.arr = {}
