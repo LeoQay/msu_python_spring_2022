@@ -98,47 +98,47 @@ class MyList:
 
 class LRUCache:
     def __init__(self, size=50):
-        logger.info(f'LRUCache: __init__ with size {size}')
+        logger.info('LRUCache: __init__ with size %s', size)
         self.size = size
         self.queue = MyList()
         self.arr = {}
 
     def __getitem__(self, key):
-        logger.info(f'LRUCache: called with key {key}')
+        logger.info('LRUCache: called with key %s', key)
         if key not in self.arr:
-            logger.warning(f'LRUCache: in __getitem__ key {key} does not exist')
+            logger.warning('LRUCache: in __getitem__ key %s does not exist', key)
             return None
         node = self.arr[key]
         self.update_used(node)
-        logger.info(f'LRUCache: __getitem__: return: {node.pair}')
+        logger.info('LRUCache: __getitem__: return: %s', node.pair)
         return node.pair.value
 
     def __setitem__(self, key, value):
         pair = Pair(key, value)
-        logger.info(f'LRUCache: __setitem__: {pair}')
+        logger.info('LRUCache: __setitem__: %s', pair)
         if key in self.arr:
             node = self.arr[key]
             node.pair.value = value
             self.update_used(node)
-            logger.info(f'LRUCache: __setitem__: set: {pair}')
+            logger.info('LRUCache: __setitem__: set: %s', pair)
             return
         self.pop()
         node = Node(pair=Pair(key, value))
         self.queue.push_back(node)
         self.arr[key] = node
-        logger.info(f'LRUCache: __setitem__: set: {pair}')
+        logger.info('LRUCache: __setitem__: set: %s', pair)
 
     def pop(self):
         if len(self.queue) < self.size:
             return
         deleted = self.queue.pop_front().pair
-        logger.info(f'LRUCache: pop: {deleted}')
+        logger.info('LRUCache: pop: %s', deleted)
         del self.arr[deleted.key]
 
     def update_used(self, node):
         self.queue.erase(node)
         self.queue.push_back(node)
-        logger.info(f'LRUCache: updated: {node.pair}')
+        logger.info('LRUCache: updated: %s', node.pair)
 
 
 if __name__ == '__main__':
@@ -152,4 +152,4 @@ if __name__ == '__main__':
 
     cache[3] = 12
 
-    v = cache[1000]
+    none_smth = cache[1000]
