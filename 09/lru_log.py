@@ -5,7 +5,7 @@ import logging
 
 logging.basicConfig(
     filename='cache.log',
-    level=logging.DEBUG,
+    level=logging.INFO,
     filemode='w'
 )
 
@@ -18,6 +18,9 @@ logger.setLevel(level=logging.DEBUG)
 class Pair:
     key: Any
     value: Any
+
+    def __str__(self):
+        return f'[key: {self.key}, value: {self.value}]'
 
 
 @dataclass
@@ -97,35 +100,44 @@ class MyList:
 
 class LRUCache:
     def __init__(self, size=50):
-        logger.info(f'Init new LRUCache with size {size}')
+        logger.info(f'LRUCache: __init__ with size {size}')
         self.size = size
         self.queue = MyList()
         self.arr = {}
 
     def __getitem__(self, key):
+        logger.info(f'LRUCache: called with key {key}')
         if key not in self.arr:
+            logger.warning(f'LRUCache: in __getitem__ key {key} does not exist')
             return None
         node = self.arr[key]
         self.update_used(node)
+        logger.info(f'LRUCache: __getitem__: return: {node.pair}')
         return node.pair.value
 
     def __setitem__(self, key, value):
+        pair = Pair(key, value)
+        logger.info(f'LRUCache: __setitem__: {pair}')
         if key in self.arr:
             node = self.arr[key]
             node.pair.value = value
             self.update_used(node)
+            logger.info(f'LRUCache: ___setitem__: set: {pair}')
             return
         self.pop()
         node = Node(pair=Pair(key, value))
         self.queue.push_back(node)
         self.arr[key] = node
+        logger.info(f'LRUCache: ___setitem__: set: {pair}')
 
     def pop(self):
         if len(self.queue) < self.size:
             return
-        deleted = self.queue.pop_front()
-        del self.arr[deleted.pair.key]
+        deleted = self.queue.pop_front().pair
+        logger.info(f'LRUCache: pop: {deleted}')
+        del self.arr[deleted.key]
 
     def update_used(self, node):
         self.queue.erase(node)
         self.queue.push_back(node)
+        logger.info(f'LRUCache: updated: {node.pair}')
