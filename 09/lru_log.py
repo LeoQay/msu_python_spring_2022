@@ -1,18 +1,14 @@
+import sys
 from dataclasses import dataclass
 from typing import Any
 import logging
 
 
 file_log = logging.FileHandler('cache.log', 'w')
-stdout_log = logging.StreamHandler()
-
-
 logging.basicConfig(
-    handlers=(file_log, stdout_log),
+    handlers=(file_log,),
     level=logging.DEBUG
 )
-
-
 logger = logging.getLogger(__name__)
 
 
@@ -124,13 +120,13 @@ class LRUCache:
             node = self.arr[key]
             node.pair.value = value
             self.update_used(node)
-            logger.info(f'LRUCache: ___setitem__: set: {pair}')
+            logger.info(f'LRUCache: __setitem__: set: {pair}')
             return
         self.pop()
         node = Node(pair=Pair(key, value))
         self.queue.push_back(node)
         self.arr[key] = node
-        logger.info(f'LRUCache: ___setitem__: set: {pair}')
+        logger.info(f'LRUCache: __setitem__: set: {pair}')
 
     def pop(self):
         if len(self.queue) < self.size:
@@ -143,3 +139,17 @@ class LRUCache:
         self.queue.erase(node)
         self.queue.push_back(node)
         logger.info(f'LRUCache: updated: {node.pair}')
+
+
+if __name__ == '__main__':
+    if sys.argv[1] == '-s':
+        stdout_log = logging.StreamHandler()
+        logger.addHandler(stdout_log)
+
+    cache = LRUCache(10)
+    for i in range(12):
+        cache[i + 1] = i + 10
+
+    cache[3] = 12
+
+    v = cache[1000]
