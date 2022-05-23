@@ -3,15 +3,17 @@ from typing import Any
 import logging
 
 
+file_log = logging.FileHandler('cache.log', 'w')
+stdout_log = logging.StreamHandler()
+
+
 logging.basicConfig(
-    filename='cache.log',
-    level=logging.INFO,
-    filemode='w'
+    handlers=(file_log, stdout_log),
+    level=logging.DEBUG
 )
 
 
-logger = logging.getLogger('cache.log')
-logger.setLevel(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 
 @dataclass
