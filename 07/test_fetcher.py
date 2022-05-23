@@ -1,6 +1,6 @@
 import unittest
-import fetcher
 import asyncio
+import fetcher
 
 
 class TestFetcher(unittest.TestCase):

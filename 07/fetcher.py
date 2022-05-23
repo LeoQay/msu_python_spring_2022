@@ -1,10 +1,10 @@
 import sys
-import aiohttp
 import asyncio
 import argparse
 import json
-from bs4 import BeautifulSoup
 from collections import Counter
+import aiohttp
+from bs4 import BeautifulSoup
 
 
 async def fetch_url(session, url, results):
@@ -14,8 +14,8 @@ async def fetch_url(session, url, results):
             soup = BeautifulSoup(data, features='html.parser')
             stat = Counter(soup.get_text().split()).most_common(5)
             results[url] = {pair[0]: pair[1] for pair in stat}
-    except BaseException as e:
-        results[url] = str(e)
+    except BaseException as err:
+        results[url] = str(err)
 
 
 async def worker(work_queue, results):
@@ -29,8 +29,8 @@ async def main(args):
     results = {}
     work_queue = asyncio.Queue()
     try:
-        with open(args['urls'], 'r') as fp:
-            for line in fp:
+        with open(args['urls'], 'r', encoding='utf-8') as urls:
+            for line in urls:
                 await work_queue.put(line.strip())
     except BaseException:
         return {}
@@ -51,5 +51,5 @@ def get_args(argv):
 
 if __name__ == '__main__':
     result = asyncio.run(main(get_args(sys.argv)))
-    with open('result.txt', 'w') as file:
+    with open('result.txt', 'w', encoding='utf-8') as file:
         print(json.dumps(result, indent=4), file=file)
