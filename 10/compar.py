@@ -103,21 +103,21 @@ def gen_random_matrix(shape):
     return [[random.randint(-10000, 10000) for _ in range(shape[1])] for _ in range(shape[0])]
 
 
-def do_try(matrix_1, matrix_2):
+def do_try(matrix_1, matrix_2, amount):
     start = time.time()
     result = matrix_1[0] * matrix_2[0]
-    for ind in range(1, 1000):
+    for ind in range(1, amount):
         result *= matrix_1[ind]
         result *= matrix_2[ind]
     end = time.time()
     return end - start
 
 
-def do_py_matrix(steps=100):
+def do_py_matrix_1(steps=100):
     def do_py_matrix_try_1():
         matrix_2_3 = [PyMatrix(gen_random_matrix((2, 3))) for _ in range(1000)]
         matrix_3_2 = [PyMatrix(gen_random_matrix((3, 2))) for _ in range(1000)]
-        return do_try(matrix_2_3, matrix_3_2)
+        return do_try(matrix_2_3, matrix_3_2, 1000)
 
     return statistics.mean([do_py_matrix_try_1() for _ in range(steps)])
 
@@ -126,9 +126,27 @@ def do_c_matrix_1(steps=100):
     def do_c_matrix_try_1():
         matrix_2_3 = [CMatrix(gen_random_matrix((2, 3))) for _ in range(1000)]
         matrix_3_2 = [CMatrix(gen_random_matrix((3, 2))) for _ in range(1000)]
-        return do_try(matrix_2_3, matrix_3_2)
+        return do_try(matrix_2_3, matrix_3_2, 1000)
 
     return statistics.mean([do_c_matrix_try_1() for _ in range(steps)])
+
+
+def do_c_matrix_2(steps=20):
+    def do_c_matrix_try_2():
+        matrix_200_300 = [CMatrix(gen_random_matrix((200, 300))) for _ in range(10)]
+        matrix_300_200 = [CMatrix(gen_random_matrix((300, 200))) for _ in range(10)]
+        return do_try(matrix_200_300, matrix_300_200, 10)
+
+    return statistics.mean([do_c_matrix_try_2() for _ in range(steps)])
+
+
+def do_py_matrix_2(steps=20):
+    def do_py_matrix_try_2():
+        matrix_200_300 = [PyMatrix(gen_random_matrix((200, 300))) for _ in range(10)]
+        matrix_300_200 = [PyMatrix(gen_random_matrix((300, 200))) for _ in range(10)]
+        return do_try(matrix_200_300, matrix_300_200, 10)
+
+    return statistics.mean([do_py_matrix_try_2() for _ in range(steps)])
 
 
 if __name__ == "__main__":
