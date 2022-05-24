@@ -1,3 +1,6 @@
+import time
+import statistics
+import random
 import cffi
 
 
@@ -47,7 +50,7 @@ class PyMatrix:
 
     @staticmethod
     def fill(shape, value=0):
-        if type(value) != int:
+        if not isinstance(value, int):
             raise TypeError('Value must be int')
         if shape[0] == 0 or shape[1] == 0:
             shape = (0, 0)
@@ -68,7 +71,7 @@ class CMatrix:
 
     def __getitem__(self, item):
         for ind in range(2):
-            if not (0 <= item[ind] < self.shape[ind]):
+            if not 0 <= item[ind] < self.shape[ind]:
                 raise KeyError('Wrong key')
         return self.arr[item[0] * self.shape[1] + item[1]]
 
@@ -89,15 +92,44 @@ class CMatrix:
 
     @staticmethod
     def fill(shape, value=0):
-        if type(value) != int:
+        if not isinstance(value, int):
             raise TypeError('Value must be int')
         if shape[0] == 0 or shape[1] == 0:
             shape = (0, 0)
         return CMatrix([[value for _ in range(shape[1])] for _ in range(shape[0])])
 
 
-if __name__ == "__main__":
-    a = PyMatrix([[1, 2], [3, 4]])
-    b = a * a
-    print(b)
+def gen_random_matrix(shape):
+    return [[random.randint(-10000, 10000) for _ in range(shape[1])] for _ in range(shape[0])]
 
+
+def do_try(matrix_1, matrix_2):
+    start = time.time()
+    result = matrix_1[0] * matrix_2[0]
+    for ind in range(1, 1000):
+        result *= matrix_1[ind]
+        result *= matrix_2[ind]
+    end = time.time()
+    return end - start
+
+
+def do_py_matrix(steps=100):
+    def do_py_matrix_try_1():
+        matrix_2_3 = [PyMatrix(gen_random_matrix((2, 3))) for _ in range(1000)]
+        matrix_3_2 = [PyMatrix(gen_random_matrix((3, 2))) for _ in range(1000)]
+        return do_try(matrix_2_3, matrix_3_2)
+
+    return statistics.mean([do_py_matrix_try_1() for _ in range(steps)])
+
+
+def do_c_matrix_1(steps=100):
+    def do_c_matrix_try_1():
+        matrix_2_3 = [CMatrix(gen_random_matrix((2, 3))) for _ in range(1000)]
+        matrix_3_2 = [CMatrix(gen_random_matrix((3, 2))) for _ in range(1000)]
+        return do_try(matrix_2_3, matrix_3_2)
+
+    return statistics.mean([do_c_matrix_try_1() for _ in range(steps)])
+
+
+if __name__ == "__main__":
+    pass
