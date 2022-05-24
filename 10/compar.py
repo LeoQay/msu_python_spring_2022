@@ -4,8 +4,6 @@ import cffi
 ffi = cffi.FFI()
 lib = ffi.dlopen('/home/leonid/PycharmProjects/msu_python_spring_2022/10/mullib.so')
 ffi.cdef('''void mul(int * a, int * b, int * res, int n, int m, int k);''')
-ffi.cdef('''void set(int * ptr, int val);''')
-ffi.cdef('''int get(int * ptr);''')
 
 
 class Matrix:
