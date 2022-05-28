@@ -7,7 +7,8 @@ import logging
 file_log = logging.FileHandler('cache.log', 'w')
 logging.basicConfig(
     handlers=(file_log,),
-    level=logging.DEBUG
+    level=logging.DEBUG,
+    format='%(asctime)s\t%(levelname)s\t%(message)s'
 )
 logger = logging.getLogger(__name__)
 
@@ -142,8 +143,10 @@ class LRUCache:
 
 
 if __name__ == '__main__':
-    if sys.argv[1] == '-s':
+    if len(sys.argv) > 1 and sys.argv[1] == '-s':
         stdout_log = logging.StreamHandler()
+        form = logging.Formatter('%(message)s')
+        stdout_log.setFormatter(form)
         logger.addHandler(stdout_log)
 
     cache = LRUCache(10)
