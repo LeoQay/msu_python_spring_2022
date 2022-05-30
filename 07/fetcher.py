@@ -19,14 +19,14 @@ async def fetch_url(session, url):
     try:
         async with session.get(url) as response:
             data = await response.text()
+            soup = BeautifulSoup(data, features='html.parser')
+            return Counter(soup.get_text().split()).most_common(5)
     except aiohttp.ClientHttpProxyError:
         pass
     except aiohttp.ClientConnectionError:
         pass
     except aiohttp.ClientConnectorError:
         pass
-    soup = BeautifulSoup(data, features='html.parser')
-    return Counter(soup.get_text().split()).most_common(5)
 
 
 async def worker(lock, urls):
