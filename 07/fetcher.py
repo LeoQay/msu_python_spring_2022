@@ -7,9 +7,12 @@ from bs4 import BeautifulSoup
 
 
 async def get_url(file_name):
-    with open(file_name, 'r', encoding='utf-8') as urls:
-        for url in urls:
-            yield url.strip()
+    try:
+        with open(file_name, 'r', encoding='utf-8') as urls:
+            for url in urls:
+                yield url.strip()
+    except FileNotFoundError:
+        pass
 
 
 async def fetch_url(session, url):

@@ -1,51 +1,22 @@
 import unittest
 import asyncio
 import fetcher
+import httpretty
 
 
-class TestFetcher(unittest.TestCase):
-    def test_1(self):
+class TestFetcher(unittest.IsolatedAsyncioTestCase):
+    async def test_1(self):
         args = {'c': 10, 'urls': 'files/not_existed.txt'}
-        result = asyncio.run(fetcher.main(args))
-        self.assertEqual(len(result), 0)
+        await fetcher.main(args)
 
-    def test_2(self):
-        args = {'c': 5, 'urls': 'files/for_test_2.txt'}
-        result = asyncio.run(fetcher.main(args))
-        self.assertEqual(len(result), 0)
+    async def test_2(self):
 
-    def test_3(self):
-        args = {'c': 15, 'urls': 'files/for_test_3.txt'}
-        result = asyncio.run(fetcher.main(args))
-        self.assertEqual(len(result), 1)
-        res = {
-            "https://web.archive.org/web/20210729085751/": {
-                "of": 19,
-                "icon": 15,
-                "An": 14,
-                "a": 13,
-                "illustration": 13
-            }
-        }
-        self.assertEqual(result, res)
+        with open('test_file.txt', 'w') as file:
+            print('https://address.com/', file=file)
 
-    def test_4(self):
-        args = {'c': 15, 'urls': 'files/for_test_4.txt'}
-        result = asyncio.run(fetcher.main(args))
-        res = {
-            "https://archive.today/20170601123918/": {
-                "Not": 1,
-                "Found": 1
-            },
-            "https://web.archive.org/web/20210729085751/": {
-                "of": 19,
-                "icon": 15,
-                "An": 14,
-                "a": 13,
-                "illustration": 13
-            }
-        }
-        self.assertEqual(result, res)
+        args = {'c': 2, 'urls': 'test_file.txt'}
+        await fetcher.main(args)
+
 
 
 if __name__ == "__main__":
